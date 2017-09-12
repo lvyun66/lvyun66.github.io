@@ -1,24 +1,29 @@
 language: node_js
-node_js: stable
-# S: Build Lifecycle
-install:
-  - npm install
-#before_script:
- # - npm install -g gulp
-script:
-  - hexo g
-after_script:
-  - cd ./public
-  - git init
-  - git config user.name "lifengsofts"
-  - git config user.email "lifengsofts@gmail.com"
-  - git add .
-  - git commit -m "Update docs"
-  - git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" master:master
-# E: Build LifeCycle
+node_js:
+- "4"  # nodejs的版本
 branches:
   only:
-    - blog-source
+  - dev  # 设置自动化部署的源码分支
 env:
- global:
-   - GH_REF: git@github.com:yunlvgo/yunlvgo.github.io.git
+  global:
+    secure: b95b236a5bcb6beeb6857b2e57018f65d2b5d954
+before_install:
+- export TZ='Asia/Shanghai'  # 设置时区
+- npm install -g hexo
+- npm install -g hexo-cli
+before_script:
+# 设置github账户信息
+- git config --global user.name "lvyun" #设置github用户名
+- git config --global user.email yunlv.go@gmail.com #设置github用户邮箱
+# github仓库操作
+- sed -i'' "s~git@github.com:yunlvgo/yunlvgo.github.io.git~https://${REPO_TOKEN}:x-oauth-basic@github.com:yunlvgo/yunlvgo.github.io.git~" _config.yml
+# 安装依赖组件
+install:
+- npm install
+# 执行的命令
+script:
+- hexo clean
+- hexo generate
+# 执行的成功后执行 
+after_success:
+- hexo deploy
