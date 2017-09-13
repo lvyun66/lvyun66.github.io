@@ -1,0 +1,25 @@
+language: node_js
+node_js:
+- '4'
+branches:
+  only:
+  - hexo
+env:
+  global:
+  - secure: I88FIjsUhnUpCrG4roghBoe9i/tTjsADKRbN74IsBYRI9OwVFPH9AisfixIi1B4LjAB4w7Ocb5+Z8XWmVNR0RHrhhW9JVu4FoWrICxKrpSkCPncBTaL+obBRBM4yUu0vq3fBvrNhPEM70diamjGKuyI+KpoPHV/Kko4JidTZgkSyKUgjU4rSnbJw/zNICMZBEVRV+XTJAo68X5D4YLcnRNmHiQz0vEQV3N37FV8Wukn7ILuvE7sIJYg+USgk618b+VDqRRK39ZNtwPStauzh81xpcezZYWxhKak050KE0rup2SBQsnvLKdScee2fk5w0qi9bTISaaYmhYfJ+myKYJpJQVPRDOu96Z8uApK8sPTD6na15o30KfsyVJKSrB8MzkO5PIuwrFOeckUsK+CsjbADXPVGt+NG76hFRKWmK8X+qwZiqepNY0pNeetxlP0T2S6YEXi4dhp7jcf81mxDkbhMBm5hB61yr6kwJThsVSJtqdOV12IAQPuo8aWI4H5DgxxD0xeVvTietgX1tJIoI6qgeUEi5B9w6j64vBvSTJq2rAfoF3tGmCQtxqIymdiWS7IGdc+a3u7Eyor2HY5b0KNuexWzN2wBwrUVVdAmxje3I9XM9No6YZcOKoIXMCB0OdzVMAAx7a78lnWG+UAgc4H85Xh8OAdykfbyrqXhTsPM=
+before_install:
+- export TZ='Asia/Shanghai'
+- npm install -g hexo
+- npm install -g hexo-cli
+before_script:
+- git config --global user.name "lvyun"
+- git config --global user.email "yunlv.go@gmail.com"
+- sed -i'' "s~git@github.com:yunlvgo/yunlvgo.github.io.git~https://${GH_TOKEN}:x-oauth-basic@github.com/yunlvgo/yunlvgo.github.io.git~"
+  _config.yml
+install:
+- npm install
+script:
+- hexo clean
+- hexo generate
+after_success:
+- hexo deploy
