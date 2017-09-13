@@ -3,7 +3,7 @@ node_js:
 - "4"  # nodejs的版本
 branches:
   only:
-  - dev  # 设置自动化部署的源码分支
+  - hexo  # 设置自动化部署的源码分支
 env:
   global:
     secure: b95b236a5bcb6beeb6857b2e57018f65d2b5d954
