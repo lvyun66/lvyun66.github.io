@@ -12,7 +12,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://github.com/yunlvgo
+url: https://github.com/nofuck
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -78,6 +78,6 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repo: git@github.com:yunlvgo/yunlvgo.github.io.git
+  repo: git@github.com:nofuck/nofuck.github.io.git
   branch: master
   message: '站点更新:{{now("YYYY-MM-DD HH:mm:ss")}}'
