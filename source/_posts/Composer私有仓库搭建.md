@@ -1,3 +1,12 @@
+---
+title: Composer私有仓库搭建
+tags:
+    - PHP
+    - Composer
+categories:
+    - Composer
+---
+
 ## Composer 私有仓库搭建
 
 ### 资源库
@@ -138,4 +147,3 @@ php bin/satis build satis.json public/
 ```
 现在我们可以看到`repositories`的`type`是`composer`;
 到此我们就可以像正常使用我们的私人仓库了.
-

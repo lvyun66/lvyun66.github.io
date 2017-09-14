@@ -1,3 +1,12 @@
+---
+title: Composer自动加载原理
+tags:
+    - PHP
+    - Composer
+categories:
+    - Composer
+---
+
 # composer自动加载原理
 
 ### 1. composer 介绍
@@ -5,11 +14,11 @@
 composer 是 PHP 管理依赖的工具,而不是包管理工具;
 
 你可以在自己的项目中声明所依赖的外部工具库(libraries),Composer 会自动帮你安装这些依赖库;
-	
+
 ### 2. composer自动加载方式
 
 composer 自动加载有四种方式:
-	
+
 	1. classMap
 	2. psr-0
 	3. psr-4
@@ -27,7 +36,7 @@ composer 自动加载有四种方式:
     },
 	```
 	composer会自动读取这个文件下面所有的文件,然后在 vendor/composer/autoload_classmap.php中将所有的 class的namespace+classname生成一个key=>value 数组.
-	
+
 	```
 	    'PHPUnit\\Framework\\TestCase' => $vendorDir . '/phpunit/phpunit/src/ForwardCompatibility/TestCase.php',
 	```
@@ -36,13 +45,13 @@ composer 自动加载有四种方式:
 
 	```
 	现在这个标准已经废弃
-	
+
 	"autoload": {
         "psr-0": {"JsonMapper": "src/"}
     },
 	```
 	对应文件夹如下:
-	
+
 	```
 	└── jsonmapper
     ├── ChangeLog
@@ -58,13 +67,13 @@ composer 自动加载有四种方式:
         ├── JsonMapper
         │   └── Exception.php
         └── JsonMapper.php
-	
+
 	```
-	
+
 	按照 psr-0 的规则, 当自动加载JsonMapper这个 class 时,会去寻找vendor/jsonmapper/src/JsonMapper.php, 最终这个配置会以 Map 的形式写入生成vendor/composer/autoload_namespaces.php这个文件中;
-	
+
 	在 psr-0 中,php 会将filename 中的`_`转义为`\`,这是因为在 psr-0 诞生之前, php 命名空间这个特性还没有出现;
-	
+
 3. psr-4
 
 	```
@@ -76,8 +85,8 @@ composer 自动加载有四种方式:
 	}
 	```
 	对应文件目录为:
-	
-	```	
+
+	```
 	└── screw
 	    ├── LICENSE
 	    ├── README.md
@@ -91,9 +100,9 @@ composer 自动加载有四种方式:
 	        │   └── Str.php
 	        └── helper.php
 	```
-	
+
 	当自动加载`Screw\HashMap`这个 class 时,会自动寻找并加载`src/Screw/HashMap.php`这个文件;psr-4 的配置会换成`namespace`为 key,dir path 为 value的 Map 形式写入到`vendor/composer/autoload_psr4.php`文件中;
-	
+
 	可以看到, 把 `Screw` 指向 `src` 之后psr-4就会默认将`src` 下面的class都有了`Screw`基本 namespace,而且 psr-4不会将`-`转义成`\`,因此文件结构不会像psr-0那么深.
 
 4. files
@@ -104,7 +113,7 @@ composer 自动加载有四种方式:
     },
 	```
 	直接引入单个文件
-	
+
 ### PSR-0 与 PSR-4 区别
 
 1. 概念
@@ -126,7 +135,7 @@ composer 自动加载有四种方式:
 2. 代码样例
 
 	composer使用 PSR-0风格:
-	
+
 		vendor/
 			vendor_name/
 				package_name/
@@ -140,9 +149,9 @@ composer 自动加载有四种方式:
 							Package_Name/
 								ClassNameTest.php   
 								# Vendor_Name\Package_Name\ClassName
-	
+
 	compser 使用 psr-4风格:
-	
+
 		vendor/
 	   		vendor_name/
 	        	package_name/
@@ -152,25 +161,25 @@ composer 自动加载有四种方式:
 	            	tests/
 	                	ClassNameTest.php   
 	                	# Vendor_Name\Package_Name\ClassNameTest
-	                	
+
 	通过以上代码可以看出,psr-4有着更加简单的文件结构.
-	
+
 ### 相关概念
 1. [PHP 命名空间](http://php.net/manual/zh/language.namespaces.rationale.php)
 2. [PSR-0](http://www.php-fig.org/psr/psr-0/)
 3. [PSR-4](http://www.php-fig.org/psr/psr-4/)
 4. [PSR-4自动加载规范](https://jifei.gitbooks.io/php-fig-standards/content/PSR-4-autoloader.html)
-	
+
 ###  相关代码
 
 ```
 <?php
 /**
  * 一个具体项目的实例
- * 
- * 当使用 SPL 注册此自动加载器后，执行以下语句将从 
+ *
+ * 当使用 SPL 注册此自动加载器后，执行以下语句将从
  * /path/to/project/src/Baz/Qux.php 载入 \Foo\Bar\Baz\Qux 类：
- * 
+ *
  *      new \Foo\Bar\Baz\Qux;
  *      
  * @param string $class 完整的类名
