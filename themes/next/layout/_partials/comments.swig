@@ -40,8 +40,8 @@
   var gitment = new Gitment({
     // 根据文章标题设置唯一评论id
     id: '{{page.articleId}}',
-    owner: 'lvyun',
-    repo: 'https://github.com/yunlvgo/yunlvgo.github.io',
+    owner: 'yunlvgo',
+    repo: 'https://yunlvgo.github.io',
     oauth: {
       client_id: 'a81fe79a92b7d49f8ae1',
       client_secret: '6ffd0fbdfe7b2d47f779f2b97249ebb63bcf5e4f',
