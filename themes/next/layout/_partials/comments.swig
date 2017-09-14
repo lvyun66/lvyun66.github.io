@@ -33,12 +33,11 @@
     {% endif %}
   </div>
 {% endif %}
-<div id="comments"></div>
+<div id="customer_comments"></div>
 <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
 <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
 <script>
   var gitment = new Gitment({
-    // 根据文章标题设置唯一评论id
     id: '{{page.articleId}}',
     owner: 'yunlvgo',
     repo: 'yunlvgo.github.io',
@@ -47,5 +46,5 @@
       client_secret: '6ffd0fbdfe7b2d47f779f2b97249ebb63bcf5e4f',
     },
   })
-  gitment.render('comments')
+  gitment.render('customer_comments')
 </script>
