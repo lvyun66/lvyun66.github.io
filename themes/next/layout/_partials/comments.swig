@@ -33,3 +33,19 @@
     {% endif %}
   </div>
 {% endif %}
+{% elseif theme.gitment %}
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+  var gitment = new Gitment({
+    // 根据文章标题设置唯一评论id
+    id: '{{page.articleId}}',
+    owner: 'lvyun',
+    repo: 'https://github.com/yunlvgo/yunlvgo.github.io',
+    oauth: {
+      client_id: 'a81fe79a92b7d49f8ae1',
+      client_secret: '6ffd0fbdfe7b2d47f779f2b97249ebb63bcf5e4f',
+    },
+  })
+  gitment.render('comments')
+</script>

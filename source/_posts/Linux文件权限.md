@@ -1,6 +1,7 @@
 title: Linux 环境变量
 tags: Linux,文件权限
 categories: Linux
+comments: true
 ---
 ## Linux文件权限
 
