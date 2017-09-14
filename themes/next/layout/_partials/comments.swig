@@ -41,8 +41,8 @@
     owner: 'nofuck',
     repo: 'nofuck.github.io',
     oauth: {
-      client_id: 'a81fe79a92b7d49f8ae1',
-      client_secret: '6ffd0fbdfe7b2d47f779f2b97249ebb63bcf5e4f',
+      client_id: 'e7c0c1dd4468e58787f1',
+      client_secret: '8bcfdc23e39c4852145eac63628f46eccb6f2347',
     },
   })
   gitment.render('customer_comments')
