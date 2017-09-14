@@ -1,8 +1,14 @@
-title: Linux 环境变量
-tags: Linux,文件权限
-categories: Linux
+---
+title: Linux文件权限
+date: 2017-9-14 19:42:23
+tags:
+    - Linux
+    - 文件权限
+categories:
+    - Linux
 comments: true
 ---
+
 ## Linux文件权限
 
 ### Linux 安全性

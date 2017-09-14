@@ -1,7 +1,14 @@
-title: Linux 环境变量
-tags: Linux,环境变量
-categories: Linux
 ---
+title: Linux 环境变量
+date: 2017-9-14 19:43:47
+tags:
+    - Linux
+    - 环境变量
+categories:
+    - Linux
+comments: true
+---
+
 ## Linux 环境变量
 
 ### 设置用户自定义变量
