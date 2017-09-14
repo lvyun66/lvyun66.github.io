@@ -7,7 +7,7 @@ categories:
     - Composer
 ---
 
-## Composer 私有仓库搭建
+## Composer私有仓库搭建
 
 ### 资源库
 
@@ -23,11 +23,11 @@ categories:
 3. PEAR
 4. Package
 ```
-##### 1. Composer
+#### 1. Composer
 
 主资源库的类型为`composer`.下面会介绍如何搭建私人仓库.
 
-##### 2. VCS
+#### 2. VCS
 
 一旦你有一个包含`composer.json`文件的库存储在线上版本控制系统(如 git或者 svn),你的库就可以被Composer安装.
 

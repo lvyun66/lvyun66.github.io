@@ -7,7 +7,7 @@ categories:
     - Composer
 ---
 
-# composer自动加载原理
+## composer自动加载原理
 
 ### 1. composer 介绍
 
