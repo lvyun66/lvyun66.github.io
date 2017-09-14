@@ -33,7 +33,7 @@
     {% endif %}
   </div>
 {% endif %}
-{% elseif theme.gitment %}
+<div id="comments"></div>
 <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
 <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
 <script>
