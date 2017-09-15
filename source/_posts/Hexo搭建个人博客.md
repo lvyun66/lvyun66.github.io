@@ -138,8 +138,12 @@ $ hexo g
 $ hexo d
 ```
 
-然后启动`Hexo`默认服务器, 就可以通过访问`http://localhost:4000/`来访问自己的博客了
+然后启动`Hexo`默认服务器
 
 ```
 $ hexo server
 ```
+
+通过访问`http://localhost:4000/`来访问自己的博客了.
+
+到此, 本地搭建的Hexo就完成了
