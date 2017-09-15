@@ -46,6 +46,7 @@ seo: true
 # If true, will add site-subtitle to index page, added in main hexo config.
 # subtitle: Subtitle
 index_with_subtitle: false
+google_site_verification: "A3a-qmi1231yVadBPMd_rMr1EpCk_EftoWff8yofZdk"
 
 
 # ---------------------------------------------------------------
