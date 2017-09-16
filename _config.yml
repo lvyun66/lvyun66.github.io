@@ -74,7 +74,7 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 plugins: hexo-generator-sitemap
 theme: next
-word_count: true
+# word_count: true
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
