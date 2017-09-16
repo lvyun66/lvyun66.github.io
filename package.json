@@ -23,6 +23,7 @@
     "hexo-renderer-marked": "^0.3.0",
     "hexo-renderer-stylus": "^0.3.3",
     "hexo-server": "^0.2.2",
-    "hexo-util": "^0.6.1"
+    "hexo-util": "^0.6.1",
+    "hexo-wordcount": "^3.0.2"
   }
 }
