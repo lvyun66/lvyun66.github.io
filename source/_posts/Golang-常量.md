@@ -1,3 +1,14 @@
+---
+title: Golang
+date: 2017/11/15 上午9:30:46
+tags:
+    - Golang
+    - const
+categories:
+    - Golang
+comments: true
+---
+
 # Golang常量
 
 ## 1. 定义
@@ -70,7 +81,7 @@ const (
 ```
 
 ## 4. 表达式
-常量定义中可以包含表达式, 但是不能包含函数或者方法; 因为函数和方法在编译过程中是未知的; 例如在[Effective.go](https://golang.org/doc/effective_go.html#constants)文件中: 
+常量定义中可以包含表达式, 但是不能包含函数或者方法; 因为函数和方法在编译过程中是未知的; 例如在[Effective.go](https://golang.org/doc/effective_go.html#constants)文件中:
 ```go
 type ByteSize float64
 
