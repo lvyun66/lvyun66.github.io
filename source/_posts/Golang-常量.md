@@ -1,5 +1,5 @@
 ---
-title: Golang
+title: Golang常量
 date: 2017/11/15 上午9:30:46
 tags:
     - Golang
