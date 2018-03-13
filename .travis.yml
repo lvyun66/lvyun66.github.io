@@ -1,26 +1,42 @@
 language: node_js
-node_js:
-- '4'
+node_js: stable
+
+cache:
+  directories:
+    - node_modules
+
+install:
+  - npm install
+
+before_script:
+  - npm install -g gulp
+
+script:
+  - gulp build
+
+after_script:
+  - cd public
+  - git init
+  - git config user.name "lvyun"
+  - git config user.email "yunlv.go@gmail.com"
+  - git add .
+  - git commit -m "Update docs"
+  - git push --force --quiet "https://${GH_TOKEN}@${GITHUB_PAGE_REF}" master:master
+  # if it isn't a user/org page, please replace it with <master:gh-pages>
+
 branches:
   only:
-  - hexo
+    - hexo
 env:
-  global:
-  - GITHUB_PAGE_REF: "github.com/nofuck/nofuck.github.io.git"
-  - secure: "Eh5JhFDHs/qBY8LkvznWfVYZBQ7/RGQaqrK16vC3JHpiHnnQB7BRgOpMQofBafdup5Y4UZ/SciaZmOJ9RtZWiNIbw1aFHHaZl/w4+Tukg87O/rLPf4hx6eXgsPr4MLtrB3q+a0b1rfS9p0hXYsq1fVOLZInhZVj1WixPKBhO9b4ARWgj9H337igDDn7ukzXRWctvKDOZbgdAFYB2DE6bLADmS2fu95kBwJZeebaqjzLkJ6etfTYWFUQRL51xIgZ6qeA6RAAqCNKgGx3LRfgX4BlG/Rg3NuWZNA9A3hzcU5obLKqWbRMiDCogPbFhrVz5Zf7zQIB7v/HcBNgcimKXEXfx+azitNhJoQTr/weWzJCGyPl2CMvnbXCcWgpbqIfhI5w1tXqLgza6ZpVIKpmiWQHZ5aeCwAvO0Lzb8NF+h31X1uxkvV/j/67arm9rxArMKPGfZqqVO8YeJ34EvtEApvjha4CBo/nZps1fOxi1/EQRvULyxa7gWVlksjtoS3XySuz7xZeEdihYbRQDS1Xu88IouqOYXJ3bSt19JxKteNb+VNVleqbd4llJEenVk0o0iLeInexbuCoHl8RXluTDbZ+yiZVp+11r0yo57+xMrl7eZZYLUq8D3wVpCMjQHLqMWnPe0lNnQ4kU87o7TtF5b7QHzW+wNVHr96BmExBqvNk="
-before_install:
-- export TZ='Asia/Shanghai'
-- npm install -g hexo
-- npm install -g hexo-cli
-before_script:
-- git config --global user.name "lvyun"
-- git config --global user.email "yunlv.go@gmail.com"
-- sed -i'' "s~git@github.com:nofuck/nofuck.github.io.git~https://${GH_TOKEN}:x-oauth-basic@github.com/nofuck/nofuck.github.io.git~"
-  _config.yml
-install:
-- npm install
-script:
-- hexo clean
-- hexo generate
-after_success:
-- hexo deploy
+ global:
+   - GITHUB_PAGE_REF: github.com/nofuck/nofuck.github.io.git
+   - secure: "Eh5JhFDHs/qBY8LkvznWfVYZBQ7/RGQaqrK16vC3JHpiHnnQB7BRgOpMQofBafdup5Y4UZ/SciaZmOJ9RtZWiNIbw1aFHHaZl/w4+Tukg87O/rLPf4hx6eXgsPr4MLtrB3q+a0b1rfS9p0hXYsq1fVOLZInhZVj1WixPKBhO9b4ARWgj9H337igDDn7ukzXRWctvKDOZbgdAFYB2DE6bLADmS2fu95kBwJZeebaqjzLkJ6etfTYWFUQRL51xIgZ6qeA6RAAqCNKgGx3LRfgX4BlG/Rg3NuWZNA9A3hzcU5obLKqWbRMiDCogPbFhrVz5Zf7zQIB7v/HcBNgcimKXEXfx+azitNhJoQTr/weWzJCGyPl2CMvnbXCcWgpbqIfhI5w1tXqLgza6ZpVIKpmiWQHZ5aeCwAvO0Lzb8NF+h31X1uxkvV/j/67arm9rxArMKPGfZqqVO8YeJ34EvtEApvjha4CBo/nZps1fOxi1/EQRvULyxa7gWVlksjtoS3XySuz7xZeEdihYbRQDS1Xu88IouqOYXJ3bSt19JxKteNb+VNVleqbd4llJEenVk0o0iLeInexbuCoHl8RXluTDbZ+yiZVp+11r0yo57+xMrl7eZZYLUq8D3wVpCMjQHLqMWnPe0lNnQ4kU87o7TtF5b7QHzW+wNVHr96BmExBqvNk="
+
+# configure notifications (email, IRC, campfire etc)
+# please update this section to your needs!
+# https://docs.travis-ci.com/user/notifications/
+notifications:
+  email:
+    - yunlv.go@gmail.com
+  on_success: change
+  on_failure: always
