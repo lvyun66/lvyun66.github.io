@@ -1,6 +1,6 @@
 ---
 title: Hexo搭建个人博客
-date: 2017-9-14 20:28:55
+date: 2017-09-14 20:28:55
 tags: Hexo
 categories: Hexo
 comments: true

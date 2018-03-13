@@ -1,6 +1,6 @@
 ---
 title: Golang中Timer的实现
-date: 2018/2/13 下午5:50:46
+date: 2018-2-13 17:50:46
 tags:
     - Golang
     - timer
@@ -10,6 +10,7 @@ comments: true
 ---
 
 # time包中Timer的实现
+
 ```go
 // 定时器结构体，包含Time类型的阻塞channel，和一个runtimeTimer
 type Timer struct {
