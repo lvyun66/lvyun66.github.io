@@ -1,6 +1,6 @@
 ---
 title: 优雅的关闭Golang的Channel
-date: 2018/2/13 下午5:50:46
+date: 2018/2/20 下午5:50:46
 tags:
     - Golang
     - channel
@@ -8,6 +8,7 @@ categories:
     - Golang
 comments: true
 ---
+
 # 优雅的关闭Golang的Channel
 
 几天前，我写过一篇解释`Golang的Channel规则`的文章。这篇文章获得很多的点赞在`reddit`和`HN`上。同时也收集了一些关于`Go channel的设计和规则`的评论：
