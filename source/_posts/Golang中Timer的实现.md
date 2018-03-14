@@ -9,7 +9,9 @@ categories:
 comments: true
 ---
 
-# time包中Timer的实现
+# Timer的实现
+
+## 源代码
 
 ```go
 // 定时器结构体，包含Time类型的阻塞channel，和一个runtimeTimer
@@ -82,7 +84,7 @@ func (t *Timer) Reset(d Duration) bool {
 }
 ```
 
-runtime包中startTimer和Timer{}的实现：
+## runtime包中startTimer和Timer{}的实现
 
 [runtime包中的startTimer实现](https://github.com/golang/go/blob/871b79316ad7f2b10f1347f8d9077713afaff451/src/runtime/time.go#L106)，具体是在`runtime/time.go`文件中
 
@@ -194,6 +196,5 @@ func timerproc(tb *timersBucket) {
 }
 
 ```
-
 
 `runtime/time.go`包含了`time`包中所有的基本实现过程，有兴趣可以深入学习
