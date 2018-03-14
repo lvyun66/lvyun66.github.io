@@ -373,7 +373,7 @@ valine:
   ##uid: Get this uid from http://www.jiathis.com/
 #add_this_id:
 # JiaThis 分享服务
-# jiathis: true
+jiathis: true
 
 # Share
 #duoshuo_share: true
@@ -581,7 +581,7 @@ motion:
 fancybox: true
 
 # Progress bar in the top during page loading.
-pace: false
+pace: true
 # Themes list:
 #pace-theme-big-counter
 #pace-theme-bounce
