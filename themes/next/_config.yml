@@ -215,8 +215,8 @@ post_wordcount:
 
 # Reward
 reward_comment: 坚持原创技术分享，您的支持将鼓励我继续创作！
-wechatpay: /images/wechatpay.png
-alipay: /images/alipay.png
+wechatpay: "/images/wechat.png"
+alipay: "/images/alipay.png"
 
 # Declare license on posts
 post_copyright:
@@ -370,7 +370,7 @@ valine:
   ##uid: Get this uid from http://www.jiathis.com/
 #add_this_id:
 # JiaThis 分享服务
-jiathis: true
+# jiathis: true
 
 # Share
 #duoshuo_share: true
