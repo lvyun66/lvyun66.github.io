@@ -22,7 +22,7 @@ keywords: "Hexo, NexT"
 rss:
 
 # Specify the date when the site was setup
-since: 2017
+# since: 2017
 
 # icon between year and author @Footer
 authoricon: heart
@@ -63,7 +63,7 @@ menu:
   archives: /archives/ || archive
   tags: /tags/ || tags
   categories: /categories/ || th
-  about: /about/ || user
+  # about: /about/ || user
   # schedule: /schedule/ || calendar
   # sitemap: /sitemap.xml || sitemap
   # commonweal: /404/ || heartbeat
@@ -102,7 +102,7 @@ social:
   GitHub: https://github.com/nofuck || github
   E-Mail: mailto:yunlv.go@gmail.com || envelope
   Weibo: https://weibo.com/yunlyz || weibo
-  Lofet: http://yunlxyz.lofter.com
+  Lofter: http://yunlxyz.lofter.com
   # Google: https://plus.google.com/yourname || google
   # Twitter: https://twitter.com/yourname || twitter
   # FB Page: https://www.facebook.com/yourname || facebook
@@ -115,14 +115,15 @@ social:
 social_icons:
   enable: true
   icons_only: false
-  transition: false
+  transition: true
 
 # Blog rolls
-#links_title: Links
-#links_layout: block
-#links_layout: inline
-#links:
-  #Title: http://example.com/
+links_title: 友情链接
+links_layout: block
+# links_layout: inline
+links:
+  LvYun: https://nofuck.github.io/
+  杜涛: http://www.hidutao.com/
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.gif
@@ -206,7 +207,7 @@ post_wordcount:
   item_text: true
   wordcount: true
   min2read: true
-  totalcount: ture
+  # totalcount: ture
   separated_meta: true
 
 # Wechat Subscriber
