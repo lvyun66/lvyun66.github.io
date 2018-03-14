@@ -33,17 +33,3 @@
     {% endif %}
   </div>
 {% endif %}
-<div id="customer_comments"></div>
-<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
-<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
-<script>
-  var gitment = new Gitment({
-    owner: 'nofuck',
-    repo: 'nofuck.github.io',
-    oauth: {
-      client_id: 'e7c0c1dd4468e58787f1',
-      client_secret: '8bcfdc23e39c4852145eac63628f46eccb6f2347',
-    },
-  })
-  gitment.render('customer_comments')
-</script>
