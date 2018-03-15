@@ -9,8 +9,6 @@ categories:
 comments: true
 ---
 
-# Golang常量
-
 ## 1. 定义
 `关键字` `常量名` = `常量值`
 ```go

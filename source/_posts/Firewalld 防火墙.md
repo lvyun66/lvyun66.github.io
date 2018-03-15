@@ -9,15 +9,13 @@ categories:
 comments: true
 ---
 
-# Centos7防火墙firewalld
-
-## 1. Firewalld介绍
+## Firewalld介绍
 
 `firewalld`支持动态更新和zone概念。`firewalld` 有图形界面和命令行界面，图形界面简单粗暴，但是`server`没有
 
 `firewalld`命令行管理工具是`firewall-cmd`.
 
-## 2. 服务相关
+## 服务相关
 
 ```
 // 启动防火墙
@@ -39,7 +37,7 @@ $ systemctl enable firewalld
 $ systemctl status firewalld
 ```
 
-## 3. 客户端命令
+## 客户端命令
 ```
 firewalld 客户端管理命令是 firewall-cmd.
 
@@ -55,7 +53,7 @@ firewalld 客户端管理命令是 firewall-cmd.
 --remove-port 移除开放的端口
 ```
 
-## 4. 端口管理
+## 端口管理
 ```
 // 开放3306端口
 $ firewall-cmd --permanent --zone=public --add-port=3306/tcp
@@ -88,7 +86,7 @@ $ firewall-cmd --reload
 success
 ```
 
-## 5. 服务管理
+## 服务管理
 ```
 $ firewall-cmd --get-services
 ssh synergy syslog syslog-tls telnet tftp tftp-client tinc
@@ -100,7 +98,7 @@ $ firewall-cmd --enable service=ssh
 $ firewall-cmd --disable service=ssh
 ```
 
-## 6. 端口转发
+## 端口转发
 
 ```
 

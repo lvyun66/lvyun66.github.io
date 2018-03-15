@@ -9,8 +9,6 @@ categories:
 comments: true
 ---
 
-# Timer的实现
-
 `time`包含了`Timer`、`Ticker`的实现，作用分别为定时器和计时器。定时器配合通道`channel`使用可以达到通道超时异常处理的效果。
 
 `Timer`结构体中包含了`runtime`中`runtimeTimer`的实现，如果要了解具体是如何实现，可以去看`runtime`库，在这里只会讲`time.Timer`的实现。
