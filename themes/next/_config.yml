@@ -373,7 +373,7 @@ valine:
   ##uid: Get this uid from http://www.jiathis.com/
 #add_this_id:
 # JiaThis 分享服务
-jiathis: true
+# jiathis: true
 
 # Share
 #duoshuo_share: true
