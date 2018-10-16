@@ -45,7 +45,7 @@ Do not run Composer as root/super user! See https://getcomposer.org/root for det
 Loading composer repositories with package information
 Updating dependencies (including require-dev)
 Package operations: 0 installs, 1 update, 0 removals
-  - Updating league/csv (8.2.1 => 8.2.2): Downloading (100%)         
+  - Updating league/csv (8.2.1 => 8.2.2): Downloading (100%)
 Writing lock file
 Generating autoload files
 ```
