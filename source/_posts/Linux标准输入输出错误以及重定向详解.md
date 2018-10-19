@@ -222,7 +222,7 @@ find: '/etc/firewalld': Permission denied
 
 7. 附上`stackoverflow`上`Byte Commander`的一个[回答](https://askubuntu.com/questions/420981/how-do-i-save-terminal-output-to-a-file)
 
-![image](https://wechat-lvyun.oss-cn-shenzhen.aliyuncs.com/%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20181016110412.png?Expires=1539662720&OSSAccessKeyId=TMP.AQHCrOYq6Jl8GE0DVZA0iFdc4an3kxu8ykT7R-Y05jc_nscDebpFrvwjCHaeMC4CFQCxyh7A1ngttRZYZAyH88Sk7Wue3gIVAOaucpdJRdpQxBLwWsKvn4OAuesA&Signature=efIOEYCrqb37YfNWUmtsQ7fxxks%3D)
+![image](https://i.loli.net/2018/10/18/5bc7e697c132e.png)
 
 ### 高级用法
 1. command >filename 2>&1
