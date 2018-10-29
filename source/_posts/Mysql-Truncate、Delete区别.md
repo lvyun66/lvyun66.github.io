@@ -40,30 +40,21 @@ comments: true
 ## 什么 DDL、DML、DCL？
 
 ## DDL
-**定义：**
-
-DDL：`数据定义语言（data definition language）`，是对数据库对象中各类对象的定义。主要包括用户、库、表、视图、索引、触发器、事件、存储过程已经函数等。
+`数据定义语言（data definition language）`，是对数据库对象中各类对象的定义。主要包括用户、库、表、视图、索引、触发器、事件、存储过程已经函数等。
 
 **关键词：**
-
 `create`、`drop`、`alter`和`truncate`等语句关键词。
 
 ## DML
-**定义：**
-
-DML：`数据操作语言（data manipulation language）`，用于添加、删除、更新和查询数据库记录，并检查数据完整性。
+`数据操作语言（data manipulation language）`，用于添加、删除、更新和查询数据库记录，并检查数据完整性。
 
 **关键词：**
-
 insert、delete、update和select
 
 ## DCL
-**定义：**
-
-DCL：`数据控制语言（data control language）`，用于控制不同数据段的直接许可和访问级别。DCL定义了数据库、表、字段、用户的访问权限和安全级别。
+`数据控制语言（data control language）`，用于控制不同数据段的直接许可和访问级别。DCL定义了数据库、表、字段、用户的访问权限和安全级别。
 
 **关键词：**
-
 `grant`、`revoke`
 
 ## 暂时写这么多，后面会把具体的用例补上。
