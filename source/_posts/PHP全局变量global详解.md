@@ -31,7 +31,7 @@ say();
 // I am %
 ```
 
-PHP与C和C++语言有点不相同，C语言中全局变量在函数中自动生效，不需要通过关键词来引用。
+PHP与 C 和 C++ 语言有点不相同，C语言中全局变量在函数中自动生效，不需要通过关键词来引用。
 
 了解变量的作用范围，才能理解全局变量。
 
@@ -114,7 +114,7 @@ echo "I am {$name}\n";
 
 ## 释放全局变量
 
-`global`和`$BLOBALS`用`unset`函数释放变量会发生什么？
+`global`和`$GLOBALS`用`unset`函数释放变量会发生什么？
 
 ```php
 $name = 'lvyun';
@@ -196,6 +196,6 @@ $GLOBALS['var'] 则指的是变量本身。
 global $var 等价于 $var = &$GLOBALS['var']
 ```
 
-这里引用鸟哥在 [PHP源码分析之Global关键字](http://www.laruence.com/2008/08/24/377.html) 的一句话：
+这里引用鸟哥在 [PHP源码分析之 GLOBAL 关键字](http://www.laruence.com/2008/08/24/377.html) 的一句话：
 
-**如果你global了一个变量，那么Zend就会去全局symbol_table去寻找，如果找不到，就会在全局symbol_table中分配相应的变量。**
+**如果你global了一个变量，那么 Zend 就会去全局 symbol_table 去寻找，如果找不到，就会在全局 symbol_table 中分配相应的变量。**
