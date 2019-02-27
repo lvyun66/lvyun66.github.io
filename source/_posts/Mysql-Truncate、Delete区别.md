@@ -1,10 +1,10 @@
 ---
-title: Mysql Truncate、Delete区别
+title: Mysql truncate、delete区别
 date: 2018-10-29 10:30:56
 tags:
-    - Mysql
+    - mysql
 categories:
-    - Mysql
+    - mysql
 comments: true
 ---
 
@@ -13,15 +13,16 @@ comments: true
 只是大概的回答了下两者之间的区别，而没有说到根本区别在哪？今天抽空在网上查找了两者之间的区别，刚好填补上之前的空缺。
 
 ## 共同点
+
 ```text
 1. 两者皆可以清空数据表；
 2. 两者与 TRANSACTION， 都可以回滚；
 ```
 
-
 ## 不同点
 
 **DELETE**
+
 ```text
 1. DELETE是 DML 命令;
 2. DELETE使用行锁执行，表的中每一行被锁定后执行删除操作；
@@ -30,6 +31,7 @@ comments: true
 ```
 
 **TRUNCATE**
+
 ```text
 1. TRUNCATE 是 DLL 命令；
 2. 如果 PK 是自增，将会重置计数器
