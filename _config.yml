@@ -49,8 +49,13 @@ highlight:
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
   path: ''
-  per_page: 5
+  per_page: 20
   order_by: -date
+
+archive_generator:
+  per_page: 15
+  yearly: true
+  monthly: true
 
 # Category & Tag
 default_category: uncategorized
@@ -73,7 +78,7 @@ pagination_dir: page
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 plugins: hexo-generator-sitemap
-theme: next
+theme: fexo
 # word_count: true
 
 # Deployment
