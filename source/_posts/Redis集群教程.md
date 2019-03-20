@@ -10,11 +10,11 @@ comments: true
 
 本文主要是翻译redis官网的一篇文章，并且加上作者的一些理解而成。若理解错误，请提出批评。
 
-原文请查看[Redis cluster tutorial](https://redis.io/topics/cluster-tutorial#redis-cluster-101)
+原文请查看 **[Redis cluster tutorial](https://redis.io/topics/cluster-tutorial#redis-cluster-101)**
 
---------
+--------------------------
 
-# Redis集群教程+- 
+# Redis集群教程
 
 本文档是对Redis Cluster的简要介绍，它不适用复杂的方法来理解分布式系统概念。它提供了有关如何设置集群、测试和操作集群的说明，而不涉及Redis集群规范中涵盖的详细信息，而只是从用户的角度描述系统的行为方式。
 
@@ -118,7 +118,7 @@ Redis Cluster在绝对需要支持同步写入，通过WAIT命令实现，这使
 
 这段时间是Redis Cluster的一个非常重要的配置指令，称为节点超时。节点超时过后，主节点会被视为失败，可以由其中一个从节点替换。类似地，在节点超时已经过去而主节点无法感知大多数其他主节点之后，它进入错误状态并且停止接收写入。
 
-# Redis Cluster参数配置
+# Redis集群参数配置
 
 我们即将创建一个示例集群部署。在继续之前，让我们介绍Redis Cluster在redis.conf文件中引入的配置参数，有些会很明显，有些会在你继续阅读之后会变得更加清晰。
 
@@ -129,7 +129,7 @@ Redis Cluster在绝对需要支持同步写入，通过WAIT命令实现，这使
 - **cluster-migration-barrier <count>**
 - **cluster-require-full-coverage <yes/no>**
 
-# 创建并使用Redis Cluster
+# 创建并使用Redis集群
 
 注意：要手动部署Redis集群，了解它的某些操作方面非常重要。但是，如果要启动集群并尽快运行，请跳过本节和下一节，然后直接使用`create-cluster`脚本创建Redis集群。
 
@@ -310,7 +310,7 @@ OK
 
 redis-cli集群支持非常基础，因此它始终使用Redis集群节点能够保持客户端重定向到右节点的事实。一个严肃的客户端能够做到很好，并在哈希槽和节点地址之间缓存地图，以直接使用与正确节点的正确连接。仅当集群配置中的某些内容发生变更时（例如，在故障转移之后或系统管理员通过添加或删除节点更改集群后），才会刷新映射。
 
-### 使用redis-rb-cluster编写示例应用程序
+### 使用redis-rb-cluster编写应用程序
 
 ### 集群重新分片
 

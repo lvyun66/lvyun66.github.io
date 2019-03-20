@@ -25,7 +25,10 @@ home_nav:
   # - name: Instagram
   #   url: https://www.instagram.com/yunlyz/
   #   target_blank: true
-
+  - name: About
+    url: /about
+    target_blank: true
+    
 # config page nav
 page_nav:
   - name: 博客
@@ -193,11 +196,11 @@ about:
   - type: Github
     icon: icon-github
     text_key: Github
-    text_value: "@Yun Lv"
+    text_value: "@yunlyz"
     text_value_url: https://github.com/yunlyz
   - type: instagram
     icon: icon-ins
-    text_key: instagram
+    text_key: Instagram
     text_value: "@yunlyz"
     text_value_url: http://weibo.com/u/1847075964
   - type: mail
