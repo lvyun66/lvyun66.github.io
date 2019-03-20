@@ -1,6 +1,6 @@
 # Blog info
 blog_name: LvYun's 博客
-slogan: 左手代码，右手诗。
+slogan: 知者行之始，行者知之成。
 url: https://yunlyz.github.io
 
 # Set avatar (Absolute url and relative url)
@@ -72,7 +72,7 @@ link_slogan:
 # set backtop show or hide
 backtop:
   home: false
-  archive: false
+  archive: true
   category: true
   tag: true
   post: true
@@ -82,7 +82,7 @@ backtop:
 donation:
   show: true
   btn_text: 支持一下
-  tip: 扫一扫，支持forsigner
+  tip: 扫一扫，支持一下。
   items:
     - type: 微信
       text: 微信扫一扫
@@ -90,9 +90,6 @@ donation:
     - type: 支付宝
       text: 支付宝扫一扫
       # imgUrl: /images/qr-alipay.png
-
-
-
 
 post:
   header_align: CENTER # LEFT|CENTER
@@ -124,12 +121,12 @@ init_page_content: HOME_NAV # HOME_NAV | POST
 # 第三方服务
 # =========================================================
 # Stats
-google_analytics: UA-38189205-1
-baidu_analytics: 57e94d016e201fba3603a8a2b0263af0
+google_analytics: UA-136610373-1
+# baidu_analytics: 57e94d016e201fba3603a8a2b0263af0
 
 # Comment service
 
-# disqus_shortname: forsigner
+disqus_shortname: blog-lvyun-im
 # hypercomments_id: 89821
 # gentie_key: d16a7241e7cd4b389584ed8db2a4e8bc
 
@@ -144,7 +141,7 @@ changyan:
 
 # gitalk评论组件，把下面的配置换成你的，官方文档: https://gitalk.github.io/
 gitalk:
-  enable: true # 如果使用 gitalk，请设置改之为true
+  enable: false # 如果使用 gitalk，请设置改之为true
   clientID: 277317290454635afa73
   clientSecret: 78223c859304da5e8d71bfce136d436c6ff95c37
   repo: blog-comment
@@ -181,9 +178,6 @@ valine:
   guest_info: nick,mail,link # custom comment header
   pageSize: 10 # pagination size
 
-
-
-
 # 不算子,文章访问量统计和显示
 busuanzi: true
 
@@ -194,8 +188,7 @@ about:
   - type: me
     icon: icon-user
     text_value:
-    - "Hubu，1994，Summer."
-    - "沉迷摄影无法自拔。"
+    - "Hubu，1994，Winter."
     - "PHP开发工程师，常用 PHP / Golang."
   - type: Github
     icon: icon-github
@@ -225,53 +218,9 @@ link:
 project:
   - type: personal
     name: fexo
-    url: https://github.com/forsigner/fexo
+    url: https://github.com
     intro: A minimalist design theme for hexo
   # - type: company
   #   name: Fexo
   #   url: https://github.com/forsigner/fexo
   #   intro: A minimalist design theme for hexo
-  - type: personal
-    name: beside
-    url: https://github.com/forsigner/beside
-    intro: I need you beside me
-  - type: personal
-    name: web-fontmin
-    url: https://github.com/forsigner/web-fontmin
-    intro: 字体子集化，在线提取你需要的字体
-  - type: personal
-    name: magic-check
-    url: https://github.com/forsigner/magic-check
-    intro: Beautify Radio and Checkbox with pure CSS
-  - type: personal
-    name: nice-bar
-    url: https://github.com/forsigner/nice-bar
-    intro: A nice and lightweight scrollbar
-  - type: personal
-    name: angular-nice-bar
-    url: https://github.com/forsigner/angular-nice-bar
-    intro: A nice and lightweight scrollbar in Angular
-  - type: personal
-    name: fo-popover
-    url: https://github.com/forsigner/fo-popover
-    intro: A nice popover for Angular
-  - type: personal
-    name: fo-tooltip
-    url: A nice tooltip for Angular
-    intro: https://github.com/forsigner/fo-tooltip
-  - type: personal
-    name: fo-modal
-    url: https://github.com/forsigner/fo-modal
-    intro: A nice modal for Angular
-  - type: personal
-    name: mocer
-    url: https://github.com/forsigner/mocer
-    intro: Setup a mock server easily
-  - type: personal
-    name: node-pngdefry
-    url: https://github.com/forsigner/node-pngdefry
-    intro: Repairing iPhone fried PNGs using Node.js
-  - type: personal
-    name: ng-simditor
-    url: https://github.com/forsigner/ng-simditor
-    intro: Angular directive for simditor
