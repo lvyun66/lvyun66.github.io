@@ -2,9 +2,9 @@
 title: 分布式ID生成方案
 date: 2018-09-18 14:40:54
 tags:
-    - ID Generator
+- ID Generator
 categories:
-    - 其他
+- 其他
 comments: true
 ---
 

@@ -3,6 +3,8 @@ menu:
   首页: /
   归档: /archives
   # 相册: /gallery
+  分类: /categories
+  # 标签: /tags
   关于: /about
 rss: /atom.xml
 
@@ -21,7 +23,7 @@ ocean:
 excerpt_link: 阅读全文...
 
 share_text: 分享
-search_text: 搜索
+# search_text: 搜索
 nav_text:
   page_prev: Prev page
   page_next: Next page
