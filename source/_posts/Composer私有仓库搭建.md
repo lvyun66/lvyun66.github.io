@@ -14,7 +14,7 @@ comments: true
 ### 资源库
 
 一个资源库是一个包的来源.它是一个 package/versions的列表.Composer将查看所有你定义的repositories以找到你项目所需的资源包.
-
+<!-- more -->
 默认情况下已经将`Packagist.org`注册到`composer`.你可以在`composer.json`申明更多的资源库,以便加入你的项目中.
 
 ### 资源库类型(`Types`)

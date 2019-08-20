@@ -11,7 +11,7 @@ comments: true
 ### 什么是Hexo?
 
 Hexo是一个用Node.js写的一个博客框架, 支持Markdown语法, 支持自定义主题, 同时可以在几秒钟之内生成静态页面.
-
+<!-- more -->
 ### 安装
 
 #### 依赖

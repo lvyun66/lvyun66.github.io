@@ -10,5 +10,5 @@ comments: true
 ---
 
 Yii2
-
+<!-- more -->
 ## 入口文件(index.php)

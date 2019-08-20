@@ -14,7 +14,7 @@ comments: true
 `firewalld`支持动态更新和zone概念。`firewalld` 有图形界面和命令行界面，图形界面简单粗暴，但是`server`没有
 
 `firewalld`命令行管理工具是`firewall-cmd`.
-
+<!-- more -->
 ## 服务相关
 
 ```

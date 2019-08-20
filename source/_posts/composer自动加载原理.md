@@ -14,7 +14,7 @@ comments: true
 ### 1. composer 介绍
 
 composer 是 PHP 管理依赖的工具,而不是包管理工具;
-
+<!-- more -->
 你可以在自己的项目中声明所依赖的外部工具库(libraries),Composer 会自动帮你安装这些依赖库;
 
 ### 2. composer自动加载方式
@@ -144,12 +144,12 @@ composer 自动加载有四种方式:
 					src/
 						Vendor_Name/
 							Package_Name/
-								ClassName.php       
+								ClassName.php
 								# Vendor_Name\Package_Name\ClassName
 					tests/
 						Vendor_Name/
 							Package_Name/
-								ClassNameTest.php   
+								ClassNameTest.php
 								# Vendor_Name\Package_Name\ClassName
 
 	compser 使用 psr-4风格:
@@ -158,10 +158,10 @@ composer 自动加载有四种方式:
 	   		vendor_name/
 	        	package_name/
 	            	src/
-	                	ClassName.php       
+	                	ClassName.php
 	                	# Vendor_Name\Package_Name\ClassName
 	            	tests/
-	                	ClassNameTest.php   
+	                	ClassNameTest.php
 	                	# Vendor_Name\Package_Name\ClassNameTest
 
 	通过以上代码可以看出,psr-4有着更加简单的文件结构.
@@ -183,7 +183,7 @@ composer 自动加载有四种方式:
  * /path/to/project/src/Baz/Qux.php 载入 \Foo\Bar\Baz\Qux 类：
  *
  *      new \Foo\Bar\Baz\Qux;
- *      
+ *
  * @param string $class 完整的类名
  * @return void
  */

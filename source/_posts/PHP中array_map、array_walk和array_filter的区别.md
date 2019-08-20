@@ -12,7 +12,7 @@ comments: true
 ---
 
 PHP数组是开发中最常用的数据类型，同时PHP也内置很多关于数组的扩展。这里主要介绍`array_map`、`array_walk`和`array_filter`三者的区别和应用场景，因为这三者很容易混淆。
-
+<!-- more -->
 这三个函数都用到了回调函数`callback`，都作用于数组的每个单元之上。其中最容易混淆的就是array_map和array_walk。
 
 三者在PHP官方文档的链接分别如下，建议仔细阅读官方文档：

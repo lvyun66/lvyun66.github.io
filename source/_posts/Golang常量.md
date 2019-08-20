@@ -15,7 +15,7 @@ comments: true
 const Pi float32 = 3.14    // 显示类型定义
 const Pi = 3.14            // 隐式类型定义
 ```
-
+<!-- more -->
 如果隐式类型定义,编译器会自动根据值类型判断常量类型
 
 ## 2. iota

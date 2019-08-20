@@ -1,7 +1,7 @@
 ---
-title: golang那些不容忽视的细节
+title: Golang那些不容忽视的细节
 date: 2019-03-20 14:32:23
-tags: 
+tags:
     - golang
 categories:
     - golang
@@ -9,7 +9,7 @@ conments: true
 ---
 
 go语言的语法简单，但使用起来确有很多细节，下面是日常开发中遇到的细节问题。
-
+<!-- more -->
 ## 除法运算符中关于常量的坑
 
 两个数相除，是向下取整或向上取整还是返回浮点数？
@@ -50,7 +50,7 @@ fmt.Println("1.0/2,0 =", 1.0/2.0)
 // var b type = int
 // var c type = float64
 // var d type = float64
-// 
+//
 // a/b = 0
 // a/2 = 0
 // a/2.0 = 0
@@ -74,3 +74,5 @@ fmt.Println("1.0/2,0 =", 1.0/2.0)
 **最终我们得出一个结论，就是表达式中的常量的类型会自动根据表达式中其他的变量类型决定，如果表达式中都为常量，这返回类型为常量的默认类型**
 
 这个关于golang中常量的类型装换的解释：[https://golang.org/ref/spec#Constants](https://golang.org/ref/spec#Constants)
+
+## 类型转换

@@ -16,6 +16,8 @@ alter table test AUTO_INCREMENT = 1000;
 set auto_increment_offset = 1;
 ```
 
+<!-- more -->
+
 Pros:
 1. 简单
 2. 可控

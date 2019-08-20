@@ -4,7 +4,7 @@
 
 # Site
 title: LvYun`s Blog
-subtitle: 一个沉迷摄影的PHP程序员
+subtitle: Web开发 ｜ PHP
 description:
 author: Lv Yun
 language: zh-CN
@@ -78,7 +78,7 @@ pagination_dir: page
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 plugins: hexo-generator-sitemap
-theme: fexo
+theme: ocean
 # word_count: true
 
 # Deployment

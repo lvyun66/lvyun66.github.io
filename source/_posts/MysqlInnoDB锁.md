@@ -12,7 +12,7 @@ comments: true
 本文主要讨论的是Mysql中InnoDB分支, 所有关于锁的讨论都是基于InnoDB, MyISAM不做讨论.
 
 参考地址： https://dev.mysql.com/doc/refman/5.6/en/innodb-locking.html
-
+<!-- more -->
 ## Mysql InnoDB锁的分类
 ### 共享锁(shared lock)和排它锁(exclusive lock)
 

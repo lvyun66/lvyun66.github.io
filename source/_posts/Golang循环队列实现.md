@@ -11,7 +11,7 @@ comments: true
 ---
 
 本文主要是对`leetcode`中队列的实现做一个简单的记录和一些心得.
-
+<!-- more -->
 ## LeetCode循环队列实现
 
 ### 最初的实现方法

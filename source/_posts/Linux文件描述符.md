@@ -12,7 +12,7 @@ comments: true
 > Linux一切皆文件
 
 `Linux文件描述符`是一个非负整数，它是一个索引值，指向内核中每个进程打开的文件记录；当打开一个现有文件或者创建文件，内核返回一个文件描述符给进程用于对文件的后续操作；当需要读写文件时，也需要将文件描述符传递给相应的函数。
-
+<!-- more -->
 当程序加载进内存后，即成为一个进程，系统会默认打开三个文件，标准输入(stdin)、标准输出(stdout)和标准错误(stderr)。这三个打开的文件对应的文件描述符分别为0、1、2。因此就有了我们经常看到的一个写法: `2>&1`，把标准错误重定向到标准输出。
 
 文件描述符与对应文件的关系图如下(图片来源[CSDN keep_belief](https://blog.csdn.net/qq_34992845/article/details/71446333)):![关系图](https://img-blog.csdn.net/20170509121308111?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzQ5OTI4NDU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)

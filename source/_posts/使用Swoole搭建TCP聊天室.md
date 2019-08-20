@@ -20,7 +20,7 @@ use Chat\proto\ChatRequest;
 use Chat\proto\Info;
 use Chat\proto\RequestType;
 use Swoole\Table;
-
+<!-- more -->
 class Server
 {
     private $swooleServer;

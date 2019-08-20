@@ -2,7 +2,7 @@
 title: Yii2源码分析(4)-Component
 date: 2018-12-04 10:57:48
 tags:
-    - Yii2 
+    - Yii2
     - PHP
 categories:
     - Yii2
@@ -10,7 +10,7 @@ comments: true
 ---
 
 `Component`是实现`behavior`、`event`和`property`特性的基类，提供`行为`和`事件`的能力；`Component`可包含多个`behavior`，`behavior`可以包含多个`event`。
-
+<!-- more -->
 `Event`是一种将自定义代码`注入`到现有代码中的方法，当触发事件时，通过`call_user_func()`回调事件处理函数达到注入的效果；`Behavior`可用于增加现有组件功能而无需修改代码的方式。
 
 ## 组件(Component)的构成

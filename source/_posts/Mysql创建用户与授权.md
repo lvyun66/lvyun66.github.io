@@ -10,15 +10,16 @@ comments: true
 ## Mysql创建用户与授权
 
 ### 1.连接Mysql
+```
+mysql -h host -u username -p password
 
-    mysql -h host -u username -p password
+host 主机名或者IP
+username 用户名
+password 用户密码
 
-    host 主机名或者IP
-    username 用户名
-    password 用户密码
-
-    注: -p password 之间可以没有空格
-
+注: -p password 之间可以没有空格
+```
+<!-- more -->
 ### 2. 创建删除用户
 
     create user 'username'@'host' identified by 'password';

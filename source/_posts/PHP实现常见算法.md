@@ -30,6 +30,7 @@ function bubble_sort(array $arr)
     return $arr;
 }
 ```
+<!-- more -->
 
 ## 插入排序
 ```php

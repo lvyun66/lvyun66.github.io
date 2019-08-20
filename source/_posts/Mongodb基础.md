@@ -10,6 +10,7 @@ comments: true
 ---
 
 ## MongoDB概念
+<!-- more -->
 
 SQL概念 | MongoDB概念| 说明
 ---|--- | ---

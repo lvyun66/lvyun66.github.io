@@ -10,7 +10,7 @@ comments: true
 ---
 
 ## Composer升级库
-
+<!-- more -->
 ### required
 
 增加一个新的依赖包到当前目录的`composer.json`，

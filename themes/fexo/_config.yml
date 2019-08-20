@@ -28,7 +28,7 @@ home_nav:
   - name: About
     url: /about
     target_blank: true
-    
+
 # config page nav
 page_nav:
   - name: 博客

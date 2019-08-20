@@ -14,7 +14,7 @@ comments: true
 ### 设置用户自定义变量
 
 1. 设置局部用户自定义变量
-
+<!-- more -->
 	```
 	lvyun@yunlyz-mbp ~ $ echo $my_variable
 

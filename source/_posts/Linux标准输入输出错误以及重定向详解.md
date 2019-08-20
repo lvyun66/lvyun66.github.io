@@ -9,7 +9,7 @@ comments: true
 ---
 
 这两天在用`Swoole`写一个简单的聊天室的时候，需要从标准输入读取数据，并且输出到屏幕，在用的时候对这些概念有些模糊，因此特地去查找了一下资料。
-
+<!-- more -->
 ## 什么是标准输入(stdin)、标准输出(stdout)、标准错误(stderr)？
 
 Linux中，在创建进程时，会默认创建三个文件描述法，fd为0、1、2，分别对应标准输入、标准输出、标准错误。
@@ -55,7 +55,7 @@ int main(int argc, char const *argv[]) {
 // 10:48:46 › gcc test.o -o test
 // 10:48:54 › ./test
 // Hello                结果
-// World!            
+// World!
 
 int main(int argc, char const *argv[]) {
     fprintf(stderr, "%s", "Hello ");
