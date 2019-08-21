@@ -14,7 +14,7 @@ tags:
 
 ## echo
 
-PHP官方文档说明：
+PHP官方文档([echo](https://www.php.net/manual/zh/function.echo.php))说明：
 > echo ( string $arg1 [, string $... ] ) : void
 >
 > echo 不是一个函数（它是一个语言结构）， 因此你不一定要使用小括号来指明参数，单引号，双引号都可以。 echo （不像其他语言构造）不表现得像一个函数， 所以不能总是使用一个函数的上下文。 另外，如果你想给echo 传递多个参数， 那么就不能使用小括号。
@@ -63,7 +63,7 @@ PHP语句先执行词法分析得到TOKEN，然后通过语法分析关联TOKEN�
 
 ## print_r
 
-PHP官方文档说明：
+PHP官方文档([print_r](https://www.php.net/manual/zh/function.print-r.php))说明：
 > print_r ( mixed $expression [, bool $return = FALSE ] ) : mixed
 >
 > print_r() 以人类易读的格式显示一个变量的信息。
