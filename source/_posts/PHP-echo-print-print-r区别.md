@@ -14,7 +14,7 @@ tags:
 
 ## echo
 
-从PHP官方文档的说明：
+PHP官方文档说明：
 > echo ( string $arg1 [, string $... ] ) : void
 >
 > echo 不是一个函数（它是一个语言结构）， 因此你不一定要使用小括号来指明参数，单引号，双引号都可以。 echo （不像其他语言构造）不表现得像一个函数， 所以不能总是使用一个函数的上下文。 另外，如果你想给echo 传递多个参数， 那么就不能使用小括号。
@@ -25,4 +25,49 @@ tags:
 
 ### 词法解析&语法分析
 
-PHP是脚本语言，因此所有的符号都会先经过词法解析和语法分析阶段，这两个阶段分别由`lex`和`yacc`完成。分别对应PHP源码中的`Zend/zend_language_parser.y`和`Zend/zend_language_scanner.l`。
+PHP是脚本语言，因此所有的符号都会先经过词法解析和语法分析阶段，这两个阶段分别由`lex`和`yacc`完成。分别对应PHP源码中的`Zend/zend_language_scanner.l`和`Zend/zend_language_parser.y`。
+
+```
+<ST_IN_SCRIPTING>"echo" {
+	RETURN_TOKEN(T_ECHO);
+}
+```
+
+```
+token:
+%token T_ECHO       "echo (T_ECHO)"
+
+statement:
+...
+T_ECHO echo_expr_list ';'		{ $$ = $2; }
+...
+
+echo_expr_list:
+		echo_expr_list ',' echo_expr { $$ = zend_ast_list_add($1, $3); }
+	|	echo_expr { $$ = zend_ast_create_list(1, ZEND_AST_STMT_LIST, $1); }
+;
+
+echo_expr:
+	expr { $$ = zend_ast_create(ZEND_AST_ECHO, $1); }
+;
+
+expr:
+		variable					{ $$ = $1; }
+	|	expr_without_variable		{ $$ = $1; }
+;
+```
+
+PHP语句先执行词法分析得到TOKEN，然后通过语法分析关联TOKEN得到抽象语法树（AST）。具体的输出我还没弄明白，暂时先写这么多。
+
+详细请参考[深入理解PHP之echo](https://juejin.im/post/5b60648e6fb9a04fcd586af1#heading-9)
+
+## print_r
+
+PHP官方文档说明：
+> print_r ( mixed $expression [, bool $return = FALSE ] ) : mixed
+>
+> print_r() 以人类易读的格式显示一个变量的信息。
+>
+> print_r()、 var_dump()、 var_export() 都会显示对象 protected 和 private 的属性。 Class 的静态属性（static） 则不会显示。
+
+print_r是PHP的一个函数，有返回值。
