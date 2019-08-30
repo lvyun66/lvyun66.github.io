@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Mysql创建用户与授权 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Mysql创建用户与授权" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Mysql创建用户与授权
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2017/09/14/Mysql创建用户与授权/" class="article-date">
+  <time datetime="2017-09-14T20:17:43.000Z" itemprop="datePublished">2017-09-14</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/MySQL/">MySQL</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <h2 id="Mysql创建用户与授权"><a href="#Mysql创建用户与授权" class="headerlink" title="Mysql创建用户与授权"></a>Mysql创建用户与授权</h2><h3 id="1-连接Mysql"><a href="#1-连接Mysql" class="headerlink" title="1.连接Mysql"></a>1.连接Mysql</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql -h host -u username -p password</span><br><span class="line"></span><br><span class="line">host 主机名或者IP</span><br><span class="line">username 用户名</span><br><span class="line">password 用户密码</span><br><span class="line"></span><br><span class="line">注: -p password 之间可以没有空格</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+<h3 id="2-创建删除用户"><a href="#2-创建删除用户" class="headerlink" title="2. 创建删除用户"></a>2. 创建删除用户</h3><pre><code>create user &apos;username&apos;@&apos;host&apos; identified by &apos;password&apos;;
+
+注: 创建username用户,能从host使用password密码登录
+
+如果想让用户从任意IP登录,host可设置为%
+
+drop user &apos;username&apos;@&apos;%&apos;;
+
+删除用户</code></pre><h3 id="3-修改密码"><a href="#3-修改密码" class="headerlink" title="3. 修改密码"></a>3. 修改密码</h3><pre><code>set password for &apos;username&apos;@&apos;host&apos; = password(&apos;password&apos;);
+
+注: 设置 username 的密码为password</code></pre><h3 id="4-授权"><a href="#4-授权" class="headerlink" title="4. 授权"></a>4. 授权</h3><pre><code>grant all privileges on datebaseName.tableName to &apos;username&apos;@&apos;host&apos;;
+flush privileges;
+
+设置用户的访问权限, 允许username用户通过host地址访问mysql
+
+prilileges 包括select, insert , update, delete等权限
+all 代表允许所有的权限
+
+注: % 代表允许username在任意机器上访问mysql
+如果要设置只允许有个IP地址能访问,则host为具体IP地址,例:192.168.0.1
+
+*特别声明: grant是增加用户权限,在是原来的基础上增加新权限
+举例说明: 假若dev_00用户现在用select权限, grant insert on *.* to &apos;dev_00&apos;@&apos;%&apos;
+则dev_00现在用select, insert 权限,如果你在使用grant insert on *.* to &apos;dev_00&apos;@&apos;%&apos;,权限还是select,insert</code></pre><h3 id="5-移除授权"><a href="#5-移除授权" class="headerlink" title="5. 移除授权"></a>5. 移除授权</h3><pre><code>REVOKE privilege ON databasename.tablename FROM &apos;username&apos;@&apos;host&apos;;
+
+例如: revoke select on *.* from &apos;dev_00&apos;@&apos;%&apos;;flush privileges;</code></pre><p>注: 在授权移除授权之后,记得执行flush privileges;刷新权限列表</p>
+<h3 id="6-查看用户权限"><a href="#6-查看用户权限" class="headerlink" title="6. 查看用户权限"></a>6. 查看用户权限</h3><pre><code>show grants for &apos;username&apos;@&apos;host&apos;;
+
+结果如下:
+GRANT USAGE ON *.* TO &apos;lvyun&apos;@&apos;%&apos; IDENTIFIED BY PASSWORD &apos;*9FFDA3C5DA0870641C807FC02D75E6461982C3F0&apos;</code></pre><h3 id="7-其他说明"><a href="#7-其他说明" class="headerlink" title="7. 其他说明"></a>7. 其他说明</h3><pre><code>**创建用户的其他方式**
+
+1. grant select on *.* to &apos;username&apos;@&apos;%&apos; identified by &apos;password&apos;
+
+说明: 创建username用户,可以从任意地址使用password登录mysql,并且授权select
+
+2. insert into mysql.user(host,user,password) values (&apos;%&apos;, &apos;username&apos;, &apos;password&apos;);
+
+说明: 因为user权限表存放在mysql.user表中,可以直接插入数据到user中(需要用写入user表的权限);不推荐这种方式.
+
+
+**grant 选项说明**
+
+grant select on *.* to &apos;username&apos;@&apos;%&apos; identified by &apos;password&apos; with grant option
+
+其中 with grant option 表示授权用户授权权限,用户能给其他用户授权.(慎用)</code></pre><h3 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h3><pre><code>privilegs取值
+
+数据库/数据表/数据列权限：
+Alter: 修改已存在的数据表(例如增加/删除列)和索引
+Create: 建立新的数据库或数据表
+Drop: 删除数据表或数据库
+INDEX: 建立或删除索引
+Insert: 增加表的记录
+Select: 显示/搜索表的记录
+Update: 修改表中已存在的记录
+Delete: 删除表的记录
+
+全局管理MySQL用户权限：
+file: 在MySQL服务器上读写文件。
+PROCESS: 显示或杀死属于其它用户的服务线程。
+RELOAD: 重载访问控制表，刷新日志等。
+SHUTDOWN: 关闭MySQL服务。
+
+特别的权限：
+ALL: 允许做任何事(和root一样)。
+USAGE: 只允许登录--其它什么也不允许做。</code></pre>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2017/09/14/Mysql创建用户与授权/" data-id="cjzxuk070000y1lpcre3lk67f"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/授权/">授权</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2017/09/14/Hexo搭建个人博客/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Hexo搭建个人博客
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2017/09/13/Composer私有仓库搭建/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Composer私有仓库搭建</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Composer自动加载原理 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Composer自动加载原理" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Composer自动加载原理
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2017/09/13/Composer自动加载原理/" class="article-date">
+  <time datetime="2017-09-13T19:44:38.000Z" itemprop="datePublished">2017-09-13</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Composer/">Composer</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <h2 id="composer自动加载原理"><a href="#composer自动加载原理" class="headerlink" title="composer自动加载原理"></a>composer自动加载原理</h2><h3 id="1-composer-介绍"><a href="#1-composer-介绍" class="headerlink" title="1. composer 介绍"></a>1. composer 介绍</h3><p>composer 是 PHP 管理依赖的工具,而不是包管理工具;</p>
+<a id="more"></a>
+<p>你可以在自己的项目中声明所依赖的外部工具库(libraries),Composer 会自动帮你安装这些依赖库;</p>
+<h3 id="2-composer自动加载方式"><a href="#2-composer自动加载方式" class="headerlink" title="2. composer自动加载方式"></a>2. composer自动加载方式</h3><p>composer 自动加载有四种方式:</p>
+<pre><code>1. classMap
+2. psr-0
+3. psr-4
+4. files</code></pre><p>目前 composer 这四种加载方式都会用到,但最流行的,最常用的是 psr-4</p>
+<ol>
+<li><p>classMap</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&quot;autoload&quot;: &#123;</span><br><span class="line">    &quot;classmap&quot;: [</span><br><span class="line">        &quot;src/&quot;</span><br><span class="line">    ]</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<p> composer会自动读取这个文件下面所有的文件,然后在 vendor/composer/autoload_classmap.php中将所有的 class的namespace+classname生成一个key=&gt;value 数组.</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos;PHPUnit\\Framework\\TestCase&apos; =&gt; $vendorDir . &apos;/phpunit/phpunit/src/ForwardCompatibility/TestCase.php&apos;,</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>psr-0</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">现在这个标准已经废弃</span><br><span class="line"></span><br><span class="line">&quot;autoload&quot;: &#123;</span><br><span class="line">       &quot;psr-0&quot;: &#123;&quot;JsonMapper&quot;: &quot;src/&quot;&#125;</span><br><span class="line">   &#125;,</span><br></pre></td></tr></table></figure>
+
+<p> 对应文件夹如下:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">└── jsonmapper</span><br><span class="line">   ├── ChangeLog</span><br><span class="line">   ├── README.rst</span><br><span class="line">   ├── composer.json</span><br><span class="line">   ├── example</span><br><span class="line">   │   ├── Address.php</span><br><span class="line">   │   ├── Contact.php</span><br><span class="line">   │   ├── run.php</span><br><span class="line">   │   └── single.json</span><br><span class="line">   ├── package.xml</span><br><span class="line">   └── src</span><br><span class="line">       ├── JsonMapper</span><br><span class="line">       │   └── Exception.php</span><br><span class="line">       └── JsonMapper.php</span><br></pre></td></tr></table></figure>
+
+<p> 按照 psr-0 的规则, 当自动加载JsonMapper这个 class 时,会去寻找vendor/jsonmapper/src/JsonMapper.php, 最终这个配置会以 Map 的形式写入生成vendor/composer/autoload_namespaces.php这个文件中;</p>
+<p> 在 psr-0 中,php 会将filename 中的<code>_</code>转义为<code>\</code>,这是因为在 psr-0 诞生之前, php 命名空间这个特性还没有出现;</p>
+</li>
+<li><p>psr-4</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&quot;autoload&quot;: &#123;</span><br><span class="line">	&quot;psr-4&quot;: &#123;</span><br><span class="line">		&quot;Screw\\&quot;:&quot;src/Screw&quot;,</span><br><span class="line">		&quot;ScrewTest\\&quot;:&quot;test/Screw&quot;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 对应文件目录为:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">└── screw</span><br><span class="line">    ├── LICENSE</span><br><span class="line">    ├── README.md</span><br><span class="line">    ├── composer.json</span><br><span class="line">    ├── phpunit.xml.dist</span><br><span class="line">    └── src</span><br><span class="line">        ├── Screw</span><br><span class="line">        │   ├── Base64UrlSafe.php</span><br><span class="line">        │   ├── HashMap.php</span><br><span class="line">        │   ├── ObjectLib.php</span><br><span class="line">        │   └── Str.php</span><br><span class="line">        └── helper.php</span><br></pre></td></tr></table></figure>
+
+<p> 当自动加载<code>Screw\HashMap</code>这个 class 时,会自动寻找并加载<code>src/Screw/HashMap.php</code>这个文件;psr-4 的配置会换成<code>namespace</code>为 key,dir path 为 value的 Map 形式写入到<code>vendor/composer/autoload_psr4.php</code>文件中;</p>
+<p> 可以看到, 把 <code>Screw</code> 指向 <code>src</code> 之后psr-4就会默认将<code>src</code> 下面的class都有了<code>Screw</code>基本 namespace,而且 psr-4不会将<code>-</code>转义成<code>\</code>,因此文件结构不会像psr-0那么深.</p>
+</li>
+<li><p>files</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&quot;autoload&quot;: &#123;</span><br><span class="line">       &quot;files&quot;: [&quot;src/functions_include.php&quot;],</span><br><span class="line">   &#125;,</span><br></pre></td></tr></table></figure>
+
+<p> 直接引入单个文件</p>
+</li>
+</ol>
+<h3 id="PSR-0-与-PSR-4-区别"><a href="#PSR-0-与-PSR-4-区别" class="headerlink" title="PSR-0 与 PSR-4 区别"></a>PSR-0 与 PSR-4 区别</h3><ol>
+<li><p>概念</p>
+<p> 虽然 PSR-0 与 PSR-4 看上去大致是一样的,都是规范 PHP 自动加载的问题;</p>
+<p> PSR-4规范了如何指定文件路径从而自动加载类定义，同时规范了自动加载文件的位置。</p>
+<p> 这个乍一看和PSR-0重复了，实际上，在功能上确实有所重复。</p>
+<p> 区别在于PSR-4的规范比较干净，去除了兼容PHP 5.3以前版本的内容，有一点PSR-0升级版的感觉。</p>
+<p> 当然，PSR-4也不是要完全替代PSR-0，而是在必要的时候补充PSR-0——当然，如果你愿意，PSR-4也可以替代PSR-0。</p>
+<p> PSR-4可以和包括PSR-0在内的其他自动加载机制共同使用。</p>
+<p> <strong>PSR-4和PSR-0最大的区别是对下划线（underscore)的定义不同。PSR-4中，在类名中使用下划线没有任何特殊含义。而PSR-0则规定类名中的下划线_会被转化成目录分隔符。</strong></p>
+</li>
+<li><p>代码样例</p>
+<p> composer使用 PSR-0风格:</p>
+<pre><code>vendor/
+    vendor_name/
+        package_name/
+            src/
+                Vendor_Name/
+                    Package_Name/
+                        ClassName.php
+                        # Vendor_Name\Package_Name\ClassName
+            tests/
+                Vendor_Name/
+                    Package_Name/
+                        ClassNameTest.php
+                        # Vendor_Name\Package_Name\ClassName</code></pre><p> compser 使用 psr-4风格:</p>
+<pre><code>vendor/
+       vendor_name/
+        package_name/
+            src/
+                ClassName.php
+                # Vendor_Name\Package_Name\ClassName
+            tests/
+                ClassNameTest.php
+                # Vendor_Name\Package_Name\ClassNameTest</code></pre><p> 通过以上代码可以看出,psr-4有着更加简单的文件结构.</p>
+</li>
+</ol>
+<h3 id="相关概念"><a href="#相关概念" class="headerlink" title="相关概念"></a>相关概念</h3><ol>
+<li><a href="http://php.net/manual/zh/language.namespaces.rationale.php" target="_blank" rel="noopener">PHP 命名空间</a></li>
+<li><a href="http://www.php-fig.org/psr/psr-0/" target="_blank" rel="noopener">PSR-0</a></li>
+<li><a href="http://www.php-fig.org/psr/psr-4/" target="_blank" rel="noopener">PSR-4</a></li>
+<li><a href="https://jifei.gitbooks.io/php-fig-standards/content/PSR-4-autoloader.html" target="_blank" rel="noopener">PSR-4自动加载规范</a></li>
+</ol>
+<h3 id="相关代码"><a href="#相关代码" class="headerlink" title="相关代码"></a>相关代码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">/**</span><br><span class="line"> * 一个具体项目的实例</span><br><span class="line"> *</span><br><span class="line"> * 当使用 SPL 注册此自动加载器后，执行以下语句将从</span><br><span class="line"> * /path/to/project/src/Baz/Qux.php 载入 \Foo\Bar\Baz\Qux 类：</span><br><span class="line"> *</span><br><span class="line"> *      new \Foo\Bar\Baz\Qux;</span><br><span class="line"> *</span><br><span class="line"> * @param string $class 完整的类名</span><br><span class="line"> * @return void</span><br><span class="line"> */</span><br><span class="line">spl_autoload_register(function ($class) &#123;</span><br><span class="line"></span><br><span class="line">    // 具体项目命名空间前缀</span><br><span class="line">    $prefix = &apos;Foo\\Bar\\&apos;;</span><br><span class="line"></span><br><span class="line">    // 命名空间前缀的基目录</span><br><span class="line">    $base_dir = __DIR__ . &apos;/src/&apos;;</span><br><span class="line"></span><br><span class="line">    // 判断类名是否具有本命名空间前缀</span><br><span class="line">    $len = strlen($prefix);</span><br><span class="line">    if (strncmp($prefix, $class, $len) !== 0) &#123;</span><br><span class="line">        // 不含本命名空间前缀，退出本自动载入器</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 截取相应类名</span><br><span class="line">    $relative_class = substr($class, $len);</span><br><span class="line"></span><br><span class="line">    // 将命名空间前缀替作为文件基目录，然后</span><br><span class="line">    // 将类名中的命名空间分隔符替换成文件分隔符,</span><br><span class="line">    // 最后添加 .php 后缀</span><br><span class="line">    $file = $base_dir . str_replace(&apos;\\&apos;, &apos;/&apos;, $relative_class) . &apos;.php&apos;;</span><br><span class="line"></span><br><span class="line">    // 如果以上文件存在，则将其载入</span><br><span class="line">    if (file_exists($file)) &#123;</span><br><span class="line">        require $file;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2017/09/13/Composer自动加载原理/" data-id="cjzxuk06100091lpczv9oy03p"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Composer/">Composer</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2017/09/13/Composer私有仓库搭建/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Composer私有仓库搭建
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2017/09/13/composer自动加载原理/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Composer自动加载原理</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

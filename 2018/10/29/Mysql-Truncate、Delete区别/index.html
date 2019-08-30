@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    MySQL truncate、delete区别 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Mysql-Truncate、Delete区别" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      MySQL truncate、delete区别
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/10/29/Mysql-Truncate、Delete区别/" class="article-date">
+  <time datetime="2018-10-29T10:30:56.000Z" itemprop="datePublished">2018-10-29</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/MySQL/">MySQL</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>上次在使用<code>Truncate</code>和<code>Delete</code>的时候，被问到两者之间的区别，结果一脸蒙蔽，不知所以然。</p>
+<p>只是大概的回答了下两者之间的区别，而没有说到根本区别在哪？今天抽空在网上查找了两者之间的区别，刚好填补上之前的空缺。</p>
+<a id="more"></a>
+<h2 id="共同点"><a href="#共同点" class="headerlink" title="共同点"></a>共同点</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. 两者皆可以清空数据表；</span><br><span class="line">2. 两者与 TRANSACTION， 都可以回滚；</span><br></pre></td></tr></table></figure>
+
+<h2 id="不同点"><a href="#不同点" class="headerlink" title="不同点"></a>不同点</h2><p><strong>DELETE</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. DELETE是 DML 命令;</span><br><span class="line">2. DELETE使用行锁执行，表的中每一行被锁定后执行删除操作；</span><br><span class="line">3. 会激活触发器；</span><br><span class="line">4. 会生成事务，可以rollback。</span><br></pre></td></tr></table></figure>
+
+<p><strong>TRUNCATE</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. TRUNCATE 是 DLL 命令；</span><br><span class="line">2. 如果 PK 是自增，将会重置计数器</span><br></pre></td></tr></table></figure>
+
+<p>附上<code>Stackover Flow</code>上的一个精彩回答，戳此可直达  <a href="https://stackoverflow.com/questions/20559893/comparison-of-truncate-vs-delete-in-mysql-sqlserver" target="_blank" rel="noopener">comparison-of-truncate-vs-delete-in-mysql-sqlserver</a></p>
+<h2 id="什么-DDL、DML、DCL？"><a href="#什么-DDL、DML、DCL？" class="headerlink" title="什么 DDL、DML、DCL？"></a>什么 DDL、DML、DCL？</h2><h2 id="DDL"><a href="#DDL" class="headerlink" title="DDL"></a>DDL</h2><p><code>数据定义语言（data definition language）</code>，是对数据库对象中各类对象的定义。主要包括用户、库、表、视图、索引、触发器、事件、存储过程已经函数等。</p>
+<p><strong>关键词：</strong><br><code>create</code>、<code>drop</code>、<code>alter</code>和<code>truncate</code>等语句关键词。</p>
+<h2 id="DML"><a href="#DML" class="headerlink" title="DML"></a>DML</h2><p><code>数据操作语言（data manipulation language）</code>，用于添加、删除、更新和查询数据库记录，并检查数据完整性。</p>
+<p><strong>关键词：</strong><br>insert、delete、update和select</p>
+<h2 id="DCL"><a href="#DCL" class="headerlink" title="DCL"></a>DCL</h2><p><code>数据控制语言（data control language）</code>，用于控制不同数据段的直接许可和访问级别。DCL定义了数据库、表、字段、用户的访问权限和安全级别。</p>
+<p><strong>关键词：</strong><br><code>grant</code>、<code>revoke</code></p>
+<h2 id="暂时写这么多，后面会把具体的用例补上。"><a href="#暂时写这么多，后面会把具体的用例补上。" class="headerlink" title="暂时写这么多，后面会把具体的用例补上。"></a>暂时写这么多，后面会把具体的用例补上。</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/10/29/Mysql-Truncate、Delete区别/" data-id="cjzxuk06z000x1lpcl7zshr8a"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/10/30/Docker之volume详解/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Docker VOLUME详解
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/10/25/PHP实现常见算法/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">PHP实现常见算法</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

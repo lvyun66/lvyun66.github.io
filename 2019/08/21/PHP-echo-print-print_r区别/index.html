@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    PHP从本质上分析echo、print、print_r三者之间的区别？ |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-PHP-echo-print-print_r区别" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      PHP从本质上分析echo、print、print_r三者之间的区别？
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/21/PHP-echo-print-print_r区别/" class="article-date">
+  <time datetime="2019-08-21T09:38:25.000Z" itemprop="datePublished">2019-08-21</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p><code>echo</code>、<code>print</code>、<code>print_r</code>在PHP开发中都是常见的，但每次只管用，不理解它们之前的区别，包括在很多的面试中都会提及三者之间的区别。我们都知道它们都可以输出并打印字符串，但本质上它们有什么区别呢？</p>
+<a id="more"></a>
+
+<h2 id="echo"><a href="#echo" class="headerlink" title="echo"></a>echo</h2><p>PHP官方文档(<a href="https://www.php.net/manual/zh/function.echo.php" target="_blank" rel="noopener">echo</a>)说明：</p>
+<blockquote>
+<p>echo ( string $arg1 [, string $… ] ) : void</p>
+<p>echo 不是一个函数（它是一个语言结构）， 因此你不一定要使用小括号来指明参数，单引号，双引号都可以。 echo （不像其他语言构造）不表现得像一个函数， 所以不能总是使用一个函数的上下文。 另外，如果你想给echo 传递多个参数， 那么就不能使用小括号。</p>
+<p>和 print 最主要的不同之处是， echo 接受参数列表，并且没有返回值。</p>
+</blockquote>
+<p>从上面的说明可以看出echo是语言结构而不是函数。那么什么是语言结构呢？说简单的就是PHP的关键词，语法的一部分。而函数由代码块组成，从源码的角度说，也就是基于Zend引擎的基础来实现的。</p>
+<h3 id="词法解析-amp-语法分析"><a href="#词法解析-amp-语法分析" class="headerlink" title="词法解析&amp;语法分析"></a>词法解析&amp;语法分析</h3><p>PHP是脚本语言，因此所有的符号都会先经过词法解析和语法分析阶段，这两个阶段分别由<code>lex</code>和<code>yacc</code>完成。分别对应PHP源码中的<code>Zend/zend_language_scanner.l</code>和<code>Zend/zend_language_parser.y</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;ST_IN_SCRIPTING&gt;&quot;echo&quot; &#123;</span><br><span class="line">	RETURN_TOKEN(T_ECHO);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">token:</span><br><span class="line">%token T_ECHO       &quot;echo (T_ECHO)&quot;</span><br><span class="line"></span><br><span class="line">statement:</span><br><span class="line">...</span><br><span class="line">T_ECHO echo_expr_list &apos;;&apos;		&#123; $$ = $2; &#125;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">echo_expr_list:</span><br><span class="line">		echo_expr_list &apos;,&apos; echo_expr &#123; $$ = zend_ast_list_add($1, $3); &#125;</span><br><span class="line">	|	echo_expr &#123; $$ = zend_ast_create_list(1, ZEND_AST_STMT_LIST, $1); &#125;</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">echo_expr:</span><br><span class="line">	expr &#123; $$ = zend_ast_create(ZEND_AST_ECHO, $1); &#125;</span><br><span class="line">;</span><br><span class="line"></span><br><span class="line">expr:</span><br><span class="line">		variable					&#123; $$ = $1; &#125;</span><br><span class="line">	|	expr_without_variable		&#123; $$ = $1; &#125;</span><br><span class="line">;</span><br></pre></td></tr></table></figure>
+
+<p>PHP语句先执行词法分析得到TOKEN，然后通过语法分析关联TOKEN得到抽象语法树（AST）。具体的输出我还没弄明白，暂时先写这么多。</p>
+<p>详细请参考<a href="https://juejin.im/post/5b60648e6fb9a04fcd586af1#heading-9" target="_blank" rel="noopener">深入理解PHP之echo</a></p>
+<h2 id="print-r"><a href="#print-r" class="headerlink" title="print_r"></a>print_r</h2><p>PHP官方文档(<a href="https://www.php.net/manual/zh/function.print-r.php" target="_blank" rel="noopener">print_r</a>)说明：</p>
+<blockquote>
+<p>print_r ( mixed $expression [, bool $return = FALSE ] ) : mixed</p>
+<p>print_r() 以人类易读的格式显示一个变量的信息。</p>
+<p>print_r()、 var_dump()、 var_export() 都会显示对象 protected 和 private 的属性。 Class 的静态属性（static） 则不会显示。</p>
+</blockquote>
+<p>print_r是PHP的一个函数，有返回值。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/08/21/PHP-echo-print-print_r区别/" data-id="cjzxuk07100101lpcn0bs6b9l"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码分析/">源码分析</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2019/08/22/PHP中的加号/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            PHP算术运算符的加号应该如何使用？
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/08/20/PHP如何获取客户端真实IP/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">PHP如何获取客户端真实IP?</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

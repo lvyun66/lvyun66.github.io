@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Signature数字签名 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-SignatrueAPI签名" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Signature数字签名
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/09/19/SignatrueAPI签名/" class="article-date">
+  <time datetime="2018-09-19T14:40:54.000Z" itemprop="datePublished">2018-09-19</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/数字签名/">数字签名</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>签名主要使用于系统间的交互，保证接口的安全性。数字签名可以理解为之后信息发送者才能生产而别人无法伪造的一段数字串。</p>
+<a id="more"></a>
+
+<h2 id="Signature作用"><a href="#Signature作用" class="headerlink" title="Signature作用"></a>Signature作用</h2><ol>
+<li>验证数据安全性（防止数据篡改）</li>
+<li>识别调用者是否真实</li>
+</ol>
+<h2 id="Signature实现"><a href="#Signature实现" class="headerlink" title="Signature实现"></a>Signature实现</h2><p>要使<code>Signature</code>达到验证数据是否被修改的效果，生成<code>Signature</code>的过程中要加入要传输的参数，达到验证的效果。<br>下面是一个比较合理的签名过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 对参数的Key进行排序后（ASCII排序）把参数拼接成字符串, 对字符串进行MD5加密</span><br><span class="line">2. 将MD5加密后的字符串与token拼接成新字符串后在进行加密，从而得到一个Signature</span><br><span class="line">3. 服务端接收到signature后对其进行验证</span><br></pre></td></tr></table></figure>
+
+<p>下面是用PHP实现的<code>Signature</code>生成方式：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">yesdat</span>\<span class="title">util</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Signature</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">gen</span><span class="params">(array $params, $token, $key)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ksort($params);</span><br><span class="line">        $sign = hash_hmac(<span class="string">'sha256'</span>, md5(http_build_query($params)) . $token, $key);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> $sign;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">$key = <span class="string">'010203040506070809'</span>;</span><br><span class="line">$token = <span class="string">'f787ffb2758f5f294b4b7946f10a3ff1005f5955'</span>;</span><br><span class="line">$params = [</span><br><span class="line">    <span class="string">'q'</span> =&gt; <span class="string">'&#123;"a": 1, "b": "abc"&#125;'</span>,</span><br><span class="line">    <span class="string">'account_id'</span> =&gt; <span class="number">10000</span>,</span><br><span class="line">    <span class="string">'user_id'</span> =&gt; <span class="number">10000</span>,</span><br><span class="line">    <span class="string">'access_token'</span> =&gt; $token,</span><br><span class="line">];</span><br><span class="line">$sign = Signature::gen($params, $token, $key);</span><br><span class="line">var_dump($sign);</span><br><span class="line"><span class="keyword">$this</span>-&gt;assertTrue(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果:</span></span><br><span class="line"><span class="comment">// e9d941d518fc5f3f98b4b386013a8a5913af246690bce5b8298cd7d3c0690a9f</span></span><br></pre></td></tr></table></figure>
+
+<p>在最后生成sign使用hmac_sha1加密方式是为了增加破解难度。</p>
+<h2 id="如何防止HTTP数据篡改？"><a href="#如何防止HTTP数据篡改？" class="headerlink" title="如何防止HTTP数据篡改？"></a>如何防止HTTP数据篡改？</h2><ol>
+<li>在没有http的情况下，增加<code>Signature</code>参数，可以很大程度上增加数据篡改的难度</li>
+<li>有HTTPS？请直接上HTTPS</li>
+</ol>
+<h2 id="重放攻击"><a href="#重放攻击" class="headerlink" title="重放攻击"></a>重放攻击</h2><p>什么是重放攻击？ 根据 <a href="https://zh.wikipedia.org/wiki/%E9%87%8D%E6%94%BE%E6%94%BB%E5%87%BB" target="_blank" rel="noopener">wikipedia</a> 上的记录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">重放攻击（Replay attack，或称作重送攻击）是一种网络攻击，通过恶意的欺诈性地重复或拖延正常的数据传输而实施。</span><br><span class="line">因工作原理如同重放歌曲一样而得名。</span><br></pre></td></tr></table></figure>
+
+<p>这里引用<code>wiki</code>上的图片，<img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/Replay_attack_on_hash.svg" alt="重放攻击"></p>
+<p>举个例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 假设A在浏览器上登录C系统，但发送的请求Request1被B监听；</span><br><span class="line">2. A登录并且通过检验，在系统返回成功状态；</span><br><span class="line">3. 之后B可以在任何的地方重发Request1这个请求，从而获取不需要知道A的密码也能登录到系统C</span><br></pre></td></tr></table></figure>
+
+<p>黑客重复的发送合法请求，从而达到欺骗系统的目的！这种重复利用合法请求进行攻击称为重放。</p>
+<p>因此防止重放就称为一件很重要的事？（废话，不防止重放攻击，账户里的钱都没了）</p>
+<h3 id="如何防止重放攻击？"><a href="#如何防止重放攻击？" class="headerlink" title="如何防止重放攻击？"></a>如何防止重放攻击？</h3><p>防止重放攻击无非就是对系统进行<code>唯一性检验</code>。杜绝重复发送请求的可能性。</p>
+<ol>
+<li><p>时间戳(timestamp)</p>
+<p> 时间戳为什么可以防止重放？</p>
+<p> 一般一个HTTP请求从发出到到达服务器的时间一般不会超过60s，假设当前时间为1（timestamp=1），到达服务器进行检验时，<code>now_time - timestamp &gt; 60</code>则认为请求是无效的。<br> 这样做可以杜绝大部分的攻击，但是如果黑客在60s内发起请求，我们好像还是一样的无能为力。</p>
+</li>
+<li><p>nonce</p>
+<p> 加入一个随机数<code>nonce</code>，每次请求都会生成一个新的nonce，如果nonce已经被使用，则认为这个请求是无效的。</p>
+<p> 生成<code>nonce</code>的方式有两种，一种是有服务端下发随机数<code>nonce</code>，发送请求时带上nonce，服务端进行检验时判断nonce是否存在。<br> 另一种是客户端生成，服务端记录<code>nonce</code>。</p>
+<p> 这样做也还是会有问题：<code>nonce</code>在服务端占用的内存或者数据库越来越大，因此我们会定期清理<code>nonce</code>，但已经被清理的<code>nonce</code>就无法达到验证的效果。<br> 基于上面两个的缺点，产生了第三种方式。</p>
+</li>
+<li><p>timestamp+nonce</p>
+<p> 服务端先验证时间戳是否在合法范围内。如果在，则继续验证<code>nonce</code>是否存在，存在则拒绝请求。这种方式只用存储一定时间内的<code>nonce</code>即可。</p>
+</li>
+</ol>
+<h3 id="PHP实现服务端验证过程"><a href="#PHP实现服务端验证过程" class="headerlink" title="PHP实现服务端验证过程"></a>PHP实现服务端验证过程</h3><p>综上所述，用PHP实现服务端的<code>Signature</code>验证过程：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$timestamp = $params[<span class="string">'timestamp'</span>];</span><br><span class="line"><span class="keyword">if</span> (time() - $timestamp &gt; <span class="number">60</span>) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> \InvalidArgumentException(<span class="string">'无效请求'</span>, <span class="number">50000</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (Signature::gen($params, $token, $key) !== $sign) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> \InvalidArgumentException(<span class="string">'无效签名'</span>, <span class="number">50000</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// nonce验证暂不验证</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/09/19/SignatrueAPI签名/" data-id="cjzxuk07c001f1lpc3j1mk31t"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Signature/">Signature</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/10/09/Composer语义化版本/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Composer语义化版本
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/09/18/分布式ID生成/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">分布式ID生成方案</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    PHP源码之strrev函数分析 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-PHP源码之strrev函数分析" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      PHP源码之strrev函数分析
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/04/09/PHP源码之strrev函数分析/" class="article-date">
+  <time datetime="2019-04-09T19:03:01.000Z" itemprop="datePublished">2019-04-09</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>PHP函数<code>strrev</code>的作用是反转字符串，传入一个带反转的字符串，并返回反转后的字符串。</p>
+<a id="more"></a>
+
+<h2 id="函数原型及用法"><a href="#函数原型及用法" class="headerlink" title="函数原型及用法"></a>函数原型及用法</h2><p>函数原型如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strrev(string $str): string</span><br></pre></td></tr></table></figure>
+
+<p>PHP官方文档：<a href="https://www.php.net/manual/en/function.strrev.php" target="_blank" rel="noopener">strrev</a> 描述了函数的具体使用方法。</p>
+<p>使用场景如下：</p>
+<ol>
+<li>反转字符串或一串数字</li>
+<li>判断数字是否为回文数</li>
+</ol>
+<h2 id="源码实现"><a href="#源码实现" class="headerlink" title="源码实现"></a>源码实现</h2><p>源文件位于<code>php-src/ext/standard/string.c</code>文件中，是PHP标准扩展string字符串扩展中的一个函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* &#123;&#123;&#123; proto string strrev(string str)</span></span><br><span class="line"><span class="comment">   Reverse a string */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> ZEND_INTRIN_SSSE3_NATIVE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tmmintrin.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">PHP_FUNCTION(strrev)    <span class="comment">// 声明函数名称 strrev</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// strrev参数str，类型为zend_string类型的指针</span></span><br><span class="line">    zend_string *str;</span><br><span class="line">    <span class="comment">// 分别表示参数的开始字符和结束字符地址</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *s, *e;</span><br><span class="line">    <span class="comment">// 函数结果n的值的地址</span></span><br><span class="line">    <span class="keyword">char</span> *p;</span><br><span class="line">    <span class="comment">// 函数返回结果n，类型同样为zend_string类型的指针</span></span><br><span class="line">    zend_string *n;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 解析函数参数并绑定到str</span></span><br><span class="line">    ZEND_PARSE_PARAMETERS_START(<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">        Z_PARAM_STR(str)</span><br><span class="line">    ZEND_PARSE_PARAMETERS_END();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 申请长度为 ZSTR_LEN(str) 的内存，STR_LEN(str)为字符串长度</span></span><br><span class="line">    n = zend_string_alloc(ZSTR_LEN(str), <span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 返回结果n的值的地址，通过地址的方式访问字符串</span></span><br><span class="line">    p = ZSTR_VAL(n);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 获取str的首元素的指针</span></span><br><span class="line">    s = ZSTR_VAL(str);</span><br><span class="line">    <span class="comment">// 字符串的末位字符地址</span></span><br><span class="line">    e = s + ZSTR_LEN(str);</span><br><span class="line">    <span class="comment">// 防止内存越界，保证e在s &lt;= e &lt; s + ZSTR_LEN(str)范围之内</span></span><br><span class="line">    --e;</span><br><span class="line">    <span class="comment">// 这里还没理解作用是什么？</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> ZEND_INTRIN_SSSE3_NATIVE</span></span><br><span class="line">    <span class="keyword">if</span> (e - s &gt; <span class="number">15</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> __m128i <span class="built_in">map</span> = _mm_set_epi8(</span><br><span class="line">                <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>,</span><br><span class="line">                <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>,</span><br><span class="line">                <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">11</span>,</span><br><span class="line">                <span class="number">12</span>, <span class="number">13</span>, <span class="number">14</span>, <span class="number">15</span>);</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> __m128i str = _mm_loadu_si128((__m128i *)(e - <span class="number">15</span>));</span><br><span class="line">            _mm_storeu_si128((__m128i *)p, _mm_shuffle_epi8(str, <span class="built_in">map</span>));</span><br><span class="line">            p += <span class="number">16</span>;</span><br><span class="line">            e -= <span class="number">16</span>;</span><br><span class="line">        &#125; <span class="keyword">while</span> (e - s &gt; <span class="number">15</span>);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="keyword">while</span> (e &gt;= s) &#123; <span class="comment">// 终止条件为，当指向str末尾的指针小于开头的指针，终止循环</span></span><br><span class="line">        <span class="comment">// 把str的尾字符与n的首字符交换，达到反转效果</span></span><br><span class="line">        *p++ = *e--;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 将指针赋值为空</span></span><br><span class="line">    *p = <span class="string">'\0'</span>;</span><br><span class="line">    <span class="comment">// 返回结果n</span></span><br><span class="line">    RETVAL_NEW_STR(n);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* &#125;&#125;&#125; */</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>从源码可以看出，反转字符串用到了两个数组，一个是参数、另一个是返回结果。函数通过遍历参数str，实现函数的反转。</p>
+<p>当字符串长度大于15可能会对函数进行优化。具体如何优化，后面对源码理解更加深刻之后再来填坑。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/04/09/PHP源码之strrev函数分析/" data-id="cjzxuk079001a1lpc4w22yxu2"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码/">源码</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2019/08/20/PHP如何获取客户端真实IP/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            PHP如何获取客户端真实IP?
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/04/07/PHP之静态变量和成员变量有何区别/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">PHP之静态变量和成员变量有何区别</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

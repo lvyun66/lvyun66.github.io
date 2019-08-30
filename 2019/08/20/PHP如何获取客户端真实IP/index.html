@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    PHP如何获取客户端真实IP? |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-PHP如何获取客户端真实IP" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      PHP如何获取客户端真实IP?
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/20/PHP如何获取客户端真实IP/" class="article-date">
+  <time datetime="2019-08-20T19:34:08.000Z" itemprop="datePublished">2019-08-20</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>PHP获取客户端IP的操作很常见，记录用户登录IP、根据IP判断用户位置、IP白名单都是一些基本的业务需求。因此如何获取准确的IP地址也是这些需求的必要前提。</p>
+<p>要想准确获取IP地址，我们先了解HTTP header中和IP相关的信息以及代理服务器和应用服务器是如何传递IP地址的。</p>
+<a id="more"></a>
+
+<h2 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h2><p>说到IP，就和HTTP协议离不开，HTTP header中和IP相关的部分包括：<code>X-Forwarded-For</code>、<code>via</code>、<code>X-Real-IP</code>等。</p>
+<h3 id="X-Forwarded-For"><a href="#X-Forwarded-For" class="headerlink" title="X-Forwarded-For"></a>X-Forwarded-For</h3><p><code>X-Forwarded-For</code>是一个HTTP扩展头部，在HTTP/1.1(RFC 2616)中并没有对它的定义，是之后才被写入<a href="https://tools.ietf.org/html/rfc7239" target="_blank" rel="noopener">RFC 7239 (Forwarded HTTP Extension)</a>标准中的。</p>
+<p>XFF请求头格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X-Forwarded-For: client, proxy1, proxy2</span><br></pre></td></tr></table></figure>
+
+<p>经过多个代理服务器后，如果严格安装XFF标准，服务端最终会收到以下信息：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X-Forwarded-For: client, IP1, IP2, IP3</span><br></pre></td></tr></table></figure>
+
+<p>也就是说代理服务器会把上一个代理服务器的IP地址追加到<code>X-Forwarded-For</code>后面，因此<code>X-Forwarded-For</code>的第一个值就是客户端的真正IP。由于<code>X-Forwarded-For</code>很容易被篡改，所有获取的的客户端IP不是真实存在的。</p>
+<h2 id="NGINX"><a href="#NGINX" class="headerlink" title="NGINX"></a>NGINX</h2><p>接下来我们了解下NGINX作为代理服务器时设置的一些参数，<code>HTTP-X-FORWARDED-FOR</code>、<code>X-REAL-IP</code>、<code>REMOTE-ADDR</code>。</p>
+<h3 id="HTTP-X-FORWARDED-FOR"><a href="#HTTP-X-FORWARDED-FOR" class="headerlink" title="HTTP-X-FORWARDED-FOR"></a>HTTP-X-FORWARDED-FOR</h3><p><code>HTTP-X-FORWARDED-FOR</code>就是HTTP协议中的<code>X-Forwarded-For</code>，在设置<code>HTTP-X-FORWARDED-FOR</code>有多重方式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">proxy_set_header HTTP-X-FORWARDED-FOR $http_x_forwarded_for;</span><br><span class="line">// 将上一个的HTTP-X-FORWARDED-FOR值复制给当前HTTP-X-FORWARDED-FOR，即忽略上一次代理的转发</span><br><span class="line"></span><br><span class="line">proxy_set_header HTTP-X-FORWARDED-FOR $remote_addr;</span><br><span class="line">// HTTP-X-FORWARDED-FOR被赋值为上一个代理服务器的IP</span><br><span class="line"></span><br><span class="line">proxy_set_header HTTP-X-FORWARDED-FOR $proxy_add_x_forwarded_for;</span><br><span class="line">// $proxy_add_x_forwarded_for = $http_x_forwarded_for + $remote_addr</span><br></pre></td></tr></table></figure>
+
+<h3 id="X-REAL-IP"><a href="#X-REAL-IP" class="headerlink" title="X-REAL-IP"></a>X-REAL-IP</h3><p>是自定义HTTP header，需要在服务端自行实现该头部协议。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxy_set_header X-REAL-IP $remote_addr;</span><br></pre></td></tr></table></figure>
+
+<h3 id="REMOTE-ADDR"><a href="#REMOTE-ADDR" class="headerlink" title="REMOTE-ADDR"></a>REMOTE-ADDR</h3><p>因为HTTP协议是应用层协议，因此header中的信息都是可以被篡改，都是不安全的。</p>
+<p><code>REMOTE-ADDR</code>是解析TCP/IP协议中的IP地址，如果这个值不正确，TCP/IP就不会建立连接，这个值是安全可靠的，我们可以通过这个值获取上一个代理服务器的真实IP。</p>
+<h2 id="PHP获取客户端IP"><a href="#PHP获取客户端IP" class="headerlink" title="PHP获取客户端IP"></a>PHP获取客户端IP</h2><p>在PHP中获取客户端IP可以通过以下的三种方式：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$_SERVER[<span class="string">'REMOTE-ADDR'</span>];</span><br><span class="line">$_SERVER[<span class="string">'HTTP-X-FORWARDED-FOR'</span>];</span><br><span class="line">$_SERVER[<span class="string">'HTTP-REAL-IP'</span>];</span><br></pre></td></tr></table></figure>
+
+<p>如果后端服务没有通过nginx做代理直接连接，<code>$_SERVER[&#39;REMOTE-ADDR&#39;]</code>可以直接获取客户端的真实IP；但如果使用了代理，则获取到就是代理服务器的IP。</p>
+<p>使用NGINX等web server进行反向代理时，在nginx配置正确的情况下，要使用<code>$_SERVER[&#39;HTTP-X-FORWARDED-FOR&#39;]</code>或<code>$_SERVER[&#39;HTTP-REAL-IP&#39;]</code>获取客户端真实IP。</p>
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>我们需要根据NGINX的配置来选择正确的方式获取IP。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/08/20/PHP如何获取客户端真实IP/" data-id="cjzxuk07800181lpcl3244yu4"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2019/08/21/PHP-echo-print-print_r区别/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            PHP从本质上分析echo、print、print_r三者之间的区别？
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/04/09/PHP源码之strrev函数分析/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">PHP源码之strrev函数分析</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

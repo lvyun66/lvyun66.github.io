@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Golang循环队列实现 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Golang循环队列实现" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Golang循环队列实现
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/09/09/Golang循环队列实现/" class="article-date">
+  <time datetime="2018-09-09T10:55:46.000Z" itemprop="datePublished">2018-09-09</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>本文主要是对<code>leetcode</code>中队列的实现做一个简单的记录和一些心得.</p>
+<a id="more"></a>
+<h2 id="LeetCode循环队列实现"><a href="#LeetCode循环队列实现" class="headerlink" title="LeetCode循环队列实现"></a>LeetCode循环队列实现</h2><h3 id="最初的实现方法"><a href="#最初的实现方法" class="headerlink" title="最初的实现方法"></a>最初的实现方法</h3><p>实现思路: 实现的方法很简单,只需要注意如何判断队列是否为空或者已经满;<br>而struct中的size字段则是用于判断队列是否为空或者队列已满的,需要利用<code>size</code>字段来实现这些功能.</p>
+<p>代码如下:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MyCircularQueue <span class="keyword">struct</span> &#123;</span><br><span class="line">    data   []<span class="keyword">int</span></span><br><span class="line">    maxCap <span class="keyword">int</span></span><br><span class="line">    size   <span class="keyword">int</span></span><br><span class="line">    head   <span class="keyword">int</span></span><br><span class="line">    tail   <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/** Initialize your data structure here. Set the size of the queue to be k. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Constructor</span><span class="params">(k <span class="keyword">int</span>)</span> <span class="title">MyCircularQueue</span></span> &#123;</span><br><span class="line">    d := <span class="built_in">make</span>([]<span class="keyword">int</span>, k)</span><br><span class="line">    <span class="keyword">return</span> MyCircularQueue&#123;</span><br><span class="line">        data:   d,</span><br><span class="line">        maxCap: k,</span><br><span class="line">        size:   <span class="number">0</span>,</span><br><span class="line">        head:   <span class="number">-1</span>,</span><br><span class="line">        tail:   <span class="number">-1</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/** Insert an element into the circular queue. Return true if the operation is successful. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">EnQueue</span><span class="params">(value <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsFull() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (this.IsEmpty()) &#123;</span><br><span class="line">        this.head = <span class="number">0</span></span><br><span class="line">        this.tail = <span class="number">0</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        this.tail ++</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> this.tail &gt;= this.maxCap &#123;</span><br><span class="line">        this.tail = <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    this.data[this.tail] = value</span><br><span class="line">    this.size++</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/** Delete an element from the circular queue. Return true if the operation is successful. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">DeQueue</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsEmpty() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> this.head &gt;= this.maxCap &#123;</span><br><span class="line">        this.head = <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    _ = this.data[this.head]</span><br><span class="line">    this.head++</span><br><span class="line">    this.size--</span><br><span class="line">    <span class="keyword">if</span> this.size == <span class="number">0</span> &#123;</span><br><span class="line">        this.head = <span class="number">-1</span></span><br><span class="line">        this.tail = <span class="number">-1</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/** Get the front item from the queue. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">Front</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsEmpty() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> this.data[this.head]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/** Get the last item from the queue. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">Rear</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsEmpty() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> this.data[this.tail]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/** Checks whether the circular queue is empty or not. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">IsEmpty</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> this.size == <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/** Checks whether the circular queue is full or not. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">IsFull</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> this.size == this.maxCap</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your MyCircularQueue object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * obj := Constructor(k);</span></span><br><span class="line"><span class="comment"> * param_1 := obj.EnQueue(value);</span></span><br><span class="line"><span class="comment"> * param_2 := obj.DeQueue();</span></span><br><span class="line"><span class="comment"> * param_3 := obj.Front();</span></span><br><span class="line"><span class="comment"> * param_4 := obj.Rear();</span></span><br><span class="line"><span class="comment"> * param_5 := obj.IsEmpty();</span></span><br><span class="line"><span class="comment"> * param_6 := obj.IsFull();</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<p>后续优化方法会在后面更新出来, 敬请期待…</p>
+<h3 id="2018-09-09-23-17-44-Sunday-更新"><a href="#2018-09-09-23-17-44-Sunday-更新" class="headerlink" title="2018-09-09 23:17:44 Sunday 更新."></a>2018-09-09 23:17:44 Sunday 更新.</h3><p>第二种思路:</p>
+<p>思路：和第一种解法不同在于，struct减少maxCap字段，同是用size表示队列的容量</p>
+<p>难题1：如何判断队列是否为空？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">判断tail==-1，在第一个元素入队时，会将tail、head同是设置为0，指向第一个元素；</span><br><span class="line">队列只有最后一个元素时，讲head、tail置为-1；这样可以保证队列为空时head、tail为-1</span><br></pre></td></tr></table></figure>
+
+<p>难题2：如何判断队列已满？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">只有队列中包含一个元素或者为空时，head==tail，其他情况head时不可能等于tail</span><br><span class="line">当队列已满时，如果再有一个元素需要入队，在tail==head，因此可以用这个零界点判断队列是否已满</span><br><span class="line">(this.tail+1)%this.size == this.head</span><br></pre></td></tr></table></figure>
+
+<p>难题3：队列为空，元素入队时如何处理head、tail的值？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">队列为空，有元素如队列，需要同时将head、tail置为0；同时用(this.tail + 1) % this.size保证可循环</span><br></pre></td></tr></table></figure>
+
+<p>难题4：队列只有一个元素，需要出队时，如果处理tail、head？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">队列只有一个元素，当需要出队列时。同时将tail、head置为-1；如果判断队列之后一个元素，只需要判断head==tail即可</span><br></pre></td></tr></table></figure>
+
+<p>代码如下:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MyCircularQueue</span></span><br><span class="line"><span class="keyword">type</span> MyCircularQueue <span class="keyword">struct</span> &#123;</span><br><span class="line">    size, head, tail <span class="keyword">int</span></span><br><span class="line">    elements         []<span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Initialize your data structure here. Set the size of the queue to be k. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Constructor</span><span class="params">(k <span class="keyword">int</span>)</span> <span class="title">MyCircularQueue</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> MyCircularQueue&#123;</span><br><span class="line">        size:     k,</span><br><span class="line">        head:     <span class="number">-1</span>,</span><br><span class="line">        tail:     <span class="number">-1</span>,</span><br><span class="line">        elements: <span class="built_in">make</span>([]<span class="keyword">int</span>, k),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Insert an element into the circular queue. Return true if the operation is successful. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">EnQueue</span><span class="params">(value <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsFull() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> this.tail == <span class="number">-1</span> &#123;</span><br><span class="line">        this.head = <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    this.tail = (this.tail + <span class="number">1</span>) % this.size</span><br><span class="line">    this.elements[this.tail] = value</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Delete an element from the circular queue. Return true if the operation is successful. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">DeQueue</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsEmpty() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    _ = this.elements[this.head]</span><br><span class="line">    <span class="keyword">if</span> this.head == this.tail &#123;</span><br><span class="line">        this.head = <span class="number">-1</span></span><br><span class="line">        this.tail = <span class="number">-1</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        this.head = (this.head + <span class="number">1</span>) % this.size</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Get the front item from the queue. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">Front</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsEmpty() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> this.elements[this.head]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Get the last item from the queue. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">Rear</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsEmpty() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> this.elements[this.tail]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Checks whether the circular queue is empty or not. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">IsEmpty</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> this.tail == <span class="number">-1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Checks whether the circular queue is full or not. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">IsFull</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (this.tail+<span class="number">1</span>)%this.size == this.head</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your MyCircularQueue object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * obj := Constructor(k);</span></span><br><span class="line"><span class="comment"> * param_1 := obj.EnQueue(value);</span></span><br><span class="line"><span class="comment"> * param_2 := obj.DeQueue();</span></span><br><span class="line"><span class="comment"> * param_3 := obj.Front();</span></span><br><span class="line"><span class="comment"> * param_4 := obj.Rear();</span></span><br><span class="line"><span class="comment"> * param_5 := obj.IsEmpty();</span></span><br><span class="line"><span class="comment"> * param_6 := obj.IsFull();</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2018-09-11-23-49-44-Tuesday-更新"><a href="#2018-09-11-23-49-44-Tuesday-更新" class="headerlink" title="2018-09-11 23:49:44 Tuesday 更新"></a>2018-09-11 23:49:44 Tuesday 更新</h3><p>第三种思路: 与第二种思路类似,不同地方在于<code>elements</code>的长度.<br><code>elements</code>的长度设置为<code>队列长度+1</code>, 这样做的目的在于, 当队列为空时,不用重复讲<code>head</code>和<code>tail</code>置为-1, 可以循环入队出队.</p>
+<p>难点1: 如果判断队列是否为空?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">在最开始, head和tail的值都为0, 而无论队列如何操作, 当队列为空的时候head永远是等于tail.</span><br><span class="line">例如: 队列的大小为5, 连续5次入队后,tail的值为4,而head值为0;</span><br><span class="line">连续五次出队, tail值为4, 而head值同样等于4, 此时队列为空.</span><br><span class="line">因此head==tail时,队列为空.</span><br></pre></td></tr></table></figure>
+
+<p>难点2: 如何判断队列已满?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">因为队列的实际大小比要求的队列大小大1, 因此当(tail+1)%队列实际大小 == head时, 队列已满.</span><br></pre></td></tr></table></figure>
+
+<p>代码如下:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MyCircularQueue <span class="keyword">struct</span> &#123;</span><br><span class="line">    size, head, tail <span class="keyword">int</span></span><br><span class="line">    elements         []<span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Initialize your data structure here. Set the size of the queue to be k. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Constructor</span><span class="params">(k <span class="keyword">int</span>)</span> <span class="title">MyCircularQueue</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> MyCircularQueue&#123;</span><br><span class="line">        size:     k + <span class="number">1</span>,</span><br><span class="line">        head:     <span class="number">0</span>,</span><br><span class="line">        tail:     <span class="number">0</span>,</span><br><span class="line">        elements: <span class="built_in">make</span>([]<span class="keyword">int</span>, k+<span class="number">1</span>),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Insert an element into the circular queue. Return true if the operation is successful. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">EnQueue</span><span class="params">(value <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsFull() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    this.tail = (this.tail + <span class="number">1</span>) % this.size</span><br><span class="line">    this.elements[this.tail] = value</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Delete an element from the circular queue. Return true if the operation is successful. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">DeQueue</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsEmpty() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    this.head = (this.head + <span class="number">1</span>) % this.size</span><br><span class="line">    _ = this.elements[this.head]</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Get the front item from the queue. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">Front</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsEmpty() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> this.elements[this.head+<span class="number">1</span>]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Get the last item from the queue. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">Rear</span><span class="params">()</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> this.IsEmpty() &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> this.elements[this.tail]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Checks whether the circular queue is empty or not. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">IsEmpty</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> this.head == this.tail</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Checks whether the circular queue is full or not. */</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *MyCircularQueue)</span> <span class="title">IsFull</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> (this.tail+<span class="number">1</span>)%this.size == this.head</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Your MyCircularQueue object will be instantiated and called as such:</span></span><br><span class="line"><span class="comment"> * obj := Constructor(k);</span></span><br><span class="line"><span class="comment"> * param_1 := obj.EnQueue(value);</span></span><br><span class="line"><span class="comment"> * param_2 := obj.DeQueue();</span></span><br><span class="line"><span class="comment"> * param_3 := obj.Front();</span></span><br><span class="line"><span class="comment"> * param_4 := obj.Rear();</span></span><br><span class="line"><span class="comment"> * param_5 := obj.IsEmpty();</span></span><br><span class="line"><span class="comment"> * param_6 := obj.IsFull();</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="终结"><a href="#终结" class="headerlink" title="终结"></a>终结</h3><p>目前, 只能想到这三种办法实现循环队列, 如果大家有更好的想法,可以一起沟通.</p>
+<h3 id="See-you-next-time"><a href="#See-you-next-time" class="headerlink" title="See you next time"></a>See you next time</h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/09/09/Golang循环队列实现/" data-id="cjzxuk06h000j1lpc6f4dlvl5"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CircularQueue/">CircularQueue</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/">Golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Queue/">Queue</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/09/18/分布式ID生成/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            分布式ID生成方案
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/07/06/Mysql-InnoDB锁/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">MySQL InnoDB锁</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    PHP数组函数 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-PHP中array_map、array_walk和array_filter的区别" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      PHP数组函数
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/03/23/PHP中array_map、array_walk和array_filter的区别/" class="article-date">
+  <time datetime="2018-03-23T10:39:20.000Z" itemprop="datePublished">2018-03-23</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>PHP数组是开发中最常用的数据类型，同时PHP也内置很多关于数组的扩展。这里主要介绍<code>array_map</code>、<code>array_walk</code>和<code>array_filter</code>三者的区别和应用场景，因为这三者很容易混淆。</p>
+<a id="more"></a>
+<p>这三个函数都用到了回调函数<code>callback</code>，都作用于数组的每个单元之上。其中最容易混淆的就是array_map和array_walk。</p>
+<p>三者在PHP官方文档的链接分别如下，建议仔细阅读官方文档：<br><a href="http://php.net/manual/zh/function.array-map.php" target="_blank" rel="noopener">array_map</a><br><a href="http://php.net/manual/zh/function.array-walk.php" target="_blank" rel="noopener">array_walk</a><br><a href="http://php.net/manual/zh/function.array-filter.php" target="_blank" rel="noopener">array_filter</a></p>
+<h2 id="array-map"><a href="#array-map" class="headerlink" title="array_map"></a>array_map</h2><p>返回数组，是为 array1 每个元素应用 callback函数之后的数组。 callback 函数形参的数量和传给 array_map() 数组数量，两者必须一样。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array_map($callback, $array1 [, $array2])</span><br><span class="line"><span class="keyword">return</span> $newArray</span><br></pre></td></tr></table></figure>
+
+<p><code>callback</code>的参数数量要是<code>array</code>保持一致。</p>
+<p>返回一个新的数组，数组的值是<code>$array1</code>每个元素应用<code>回调函数callback</code>之后的值。<em>如果返回的新数组的值不为空，<code>callback</code>必须要有返回值。</em></p>
+<p>用<code>foreach</code>举例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">$arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</span><br><span class="line">$newArr = [];</span><br><span class="line"><span class="keyword">foreach</span>($arr <span class="keyword">as</span> $key =&gt; $val) &#123;</span><br><span class="line">    $newArr[] = aquare($val)</span><br><span class="line">&#125;</span><br><span class="line">var_dump($newArr);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">aquare</span><span class="params">($val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> pow($val, <span class="number">2</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// result:</span></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [<span class="number">0</span>] =&gt; <span class="number">1</span></span><br><span class="line">    [<span class="number">1</span>] =&gt; <span class="number">4</span></span><br><span class="line">    [<span class="number">2</span>] =&gt; <span class="number">9</span></span><br><span class="line">    [<span class="number">3</span>] =&gt; <span class="number">16</span></span><br><span class="line">    [<span class="number">4</span>] =&gt; <span class="number">25</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果callback没有返回值。则新数组为</span></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [<span class="number">0</span>] =&gt;</span><br><span class="line">    [<span class="number">1</span>] =&gt;</span><br><span class="line">    [<span class="number">2</span>] =&gt;</span><br><span class="line">    [<span class="number">3</span>] =&gt;</span><br><span class="line">    [<span class="number">4</span>] =&gt;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="array-walk"><a href="#array-walk" class="headerlink" title="array_walk"></a>array_walk</h2><p>将用户自定义函数 funcname 应用到 array 数组中的每个单元。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array_walk(&amp;$array, $callback)</span><br><span class="line"><span class="keyword">return</span> bool</span><br></pre></td></tr></table></figure>
+
+<p>array_walk不会返回新数组，返回一个bool类型的值。典型情况下 callback 接受两个参数。array 参数的值作为第一个，键名作为第二个。</p>
+<p>只有 array 的值才可以被改变，用户不应在回调函数中改变该数组本身的结构。例如增加/删除单元，unset 单元等等。<br><code>array_walk</code>的第一个参数为引用类型，如果改变单元内容，数组内容也会改变。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$arr = [</span><br><span class="line">    <span class="string">'name'</span> =&gt; <span class="string">'lvyun'</span>,</span><br><span class="line">    <span class="string">'age'</span> =&gt; <span class="string">'23'</span>,</span><br><span class="line">    <span class="string">'email'</span> =&gt; <span class="string">'yunlv.go@gmail.com'</span>,</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line">array_walk($arr, <span class="function"><span class="keyword">function</span> <span class="params">(&amp;$val, $key)</span> </span>&#123;</span><br><span class="line">    $val = $val . <span class="string">" : "</span> . time();</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">var_dump($arr);</span><br><span class="line"></span><br><span class="line"><span class="comment">// result</span></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [name] =&gt; lvyun : <span class="number">1521777271</span></span><br><span class="line">    [age] =&gt; <span class="number">23</span> : <span class="number">1521777271</span></span><br><span class="line">    [email] =&gt; yunlv.go@gmail.com : <span class="number">1521777271</span></span><br><span class="line">)</span><br><span class="line"><span class="comment">// 如果$val不是引用，数组就不会有任何改变</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="array-filter"><a href="#array-filter" class="headerlink" title="array_filter"></a>array_filter</h2><p>依次将 array 数组中的每个值传递到 callback 函数。如果 callback 函数返回 true，则 array 数组的当前值会被包含在返回的结果数组中。数组的键名保留不变。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array_filter($arr, $callback)</span><br><span class="line"><span class="keyword">return</span> $newArr</span><br></pre></td></tr></table></figure>
+
+<p>实例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$arr = [</span><br><span class="line">    <span class="number">0</span> =&gt; [</span><br><span class="line">        <span class="string">'a'</span> =&gt; <span class="number">0</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="number">1</span> =&gt; [</span><br><span class="line">        <span class="string">'a'</span> =&gt; <span class="number">1</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="number">2</span> =&gt; [</span><br><span class="line">        <span class="string">'a'</span> =&gt; <span class="number">2</span></span><br><span class="line">    ],</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line">$newArr = array_filter($arr, <span class="function"><span class="keyword">function</span><span class="params">($item)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> $item[<span class="string">'a'</span>] == <span class="number">0</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// result</span></span><br><span class="line"><span class="keyword">Array</span></span><br><span class="line">(</span><br><span class="line">    [<span class="number">0</span>] =&gt; <span class="keyword">Array</span></span><br><span class="line">        (</span><br><span class="line">            [a] =&gt; <span class="number">0</span></span><br><span class="line">        )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><code>callback</code>函数要返回bool类型，判断是否符合要求，如果返回true，则把该数组填入新数组中。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/03/23/PHP中array_map、array_walk和array_filter的区别/" data-id="cjzxuk07200121lpczls2wvk1"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/array-filter/">array_filter</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/array-map/">array_map</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/array-walk/">array_walk</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/05/28/Linux文件描述符/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Linux文件描述符
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/03/21/Golang文件操作方式/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Golang文件操作方式</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Golang那些不容忽视的细节 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Golang那些不容忽视的细节" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Golang那些不容忽视的细节
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/03/20/Golang那些不容忽视的细节/" class="article-date">
+  <time datetime="2019-03-20T14:32:23.000Z" itemprop="datePublished">2019-03-20</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>go语言的语法简单，但使用起来确有很多细节，下面是日常开发中遇到的细节问题。</p>
+<a id="more"></a>
+<h2 id="除法运算符中关于常量的坑"><a href="#除法运算符中关于常量的坑" class="headerlink" title="除法运算符中关于常量的坑"></a>除法运算符中关于常量的坑</h2><p>两个数相除，是向下取整或向上取整还是返回浮点数？</p>
+<p>首先，go中整数不能除以浮点数，浮点数也不能除整数，否则会发生精度值溢出的情况，这在go中是不被允许的。</p>
+<p>其次，除法运算符的运算结果类型是由除数决定的，因为运算是从左到右的顺序执行。如果除数为整数，则结果向下取整；若为浮点数，则结果同样为浮点数。</p>
+<p>但如果除数或者被除数都常量，结果又如何呢？我们要知道，常量可以通过常量声明或者显式的给定类型，也可以通过在变量声明、赋值或者表达式的操作数中隐式地使用；因此如果除数类型确定，而被除数类型未确定，则被除数的类型根据出来来推断。例如：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> a = <span class="number">1</span></span><br><span class="line"><span class="keyword">var</span> b = <span class="number">2</span></span><br><span class="line"><span class="keyword">var</span> c = <span class="number">1.0</span></span><br><span class="line"><span class="keyword">var</span> d = <span class="number">2.2</span></span><br><span class="line">fmt.Printf(<span class="string">"var a type = %T\n"</span>, a)</span><br><span class="line">fmt.Printf(<span class="string">"var b type = %T\n"</span>, b)</span><br><span class="line">fmt.Printf(<span class="string">"var c type = %T\n"</span>, c)</span><br><span class="line">fmt.Printf(<span class="string">"var d type = %T\n"</span>, d)</span><br><span class="line">fmt.Println()</span><br><span class="line"></span><br><span class="line">fmt.Println(<span class="string">"a/b ="</span>, a/b)</span><br><span class="line"><span class="comment">//fmt.Println(a / d)</span></span><br><span class="line">fmt.Println(<span class="string">"a/2 ="</span>, a/<span class="number">2</span>)</span><br><span class="line">fmt.Println(<span class="string">"a/2.0 ="</span>, a/<span class="number">2.0</span>)</span><br><span class="line"></span><br><span class="line">fmt.Println(<span class="string">"c/d ="</span>, c/d)</span><br><span class="line">fmt.Println(<span class="string">"c/2 ="</span>, c/<span class="number">2</span>)</span><br><span class="line"><span class="comment">//fmt.Println(c / b)</span></span><br><span class="line">fmt.Println(<span class="string">"c/2.0 ="</span>, c/<span class="number">2.0</span>)</span><br><span class="line"></span><br><span class="line">fmt.Println(<span class="string">"1/b ="</span>, <span class="number">1</span>/b)</span><br><span class="line">fmt.Println(<span class="string">"1/2 ="</span>, <span class="number">1</span>/<span class="number">2</span>)</span><br><span class="line">fmt.Println(<span class="string">"1.0/b ="</span>, <span class="number">1.0</span>/b)</span><br><span class="line">fmt.Println(<span class="string">"1.0/2,0 ="</span>, <span class="number">1.0</span>/<span class="number">2.0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// output</span></span><br><span class="line"><span class="comment">// var a type = int</span></span><br><span class="line"><span class="comment">// var b type = int</span></span><br><span class="line"><span class="comment">// var c type = float64</span></span><br><span class="line"><span class="comment">// var d type = float64</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// a/b = 0</span></span><br><span class="line"><span class="comment">// a/2 = 0</span></span><br><span class="line"><span class="comment">// a/2.0 = 0</span></span><br><span class="line"><span class="comment">// c/d = 0.45454545454545453</span></span><br><span class="line"><span class="comment">// c/2 = 0.5</span></span><br><span class="line"><span class="comment">// c/2.0 = 0.5</span></span><br><span class="line"><span class="comment">// 1/b = 0</span></span><br><span class="line"><span class="comment">// 1/2 = 0</span></span><br><span class="line"><span class="comment">// 1.0/b = 0</span></span><br><span class="line"><span class="comment">// 1.0/2,0 = 0.5</span></span><br></pre></td></tr></table></figure>
+
+<p>从上面的测试结果可以看出：</p>
+<ol>
+<li>除数为常量、被除数为整数，则结果为整数</li>
+<li>除数为整数、被除数为常量，则结果为整数</li>
+<li>除数为常量、被除数为浮点数，则结果为浮点数</li>
+<li>除数为浮点数、被除数为常量，则结果为浮点数</li>
+<li>除数为整数、被除数为浮点数。不被允许</li>
+<li>除数为浮点数、被除数为整数，不被允许</li>
+</ol>
+<p><strong>最终我们得出一个结论，就是表达式中的常量的类型会自动根据表达式中其他的变量类型决定，如果表达式中都为常量，这返回类型为常量的默认类型</strong></p>
+<p>这个关于golang中常量的类型装换的解释：<a href="https://golang.org/ref/spec#Constants" target="_blank" rel="noopener">https://golang.org/ref/spec#Constants</a></p>
+<h2 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/03/20/Golang那些不容忽视的细节/" data-id="cjzxuk06j000l1lpcw8zeqpd0"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/">Golang</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2019/03/21/Golang可变参数函数传入切片会发生什么/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Golang可变参数函数，传入切片会发生什么？
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2019/02/14/Redis集群教程/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Redis集群教程</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

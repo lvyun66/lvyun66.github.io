@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Linux 环境变量 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Linux环境变量" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux 环境变量
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2017/09/13/Linux环境变量/" class="article-date">
+  <time datetime="2017-09-13T19:43:47.000Z" itemprop="datePublished">2017-09-13</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <h2 id="Linux-环境变量"><a href="#Linux-环境变量" class="headerlink" title="Linux 环境变量"></a>Linux 环境变量</h2><h3 id="设置用户自定义变量"><a href="#设置用户自定义变量" class="headerlink" title="设置用户自定义变量"></a>设置用户自定义变量</h3><ol>
+<li><p>设置局部用户自定义变量</p>
+<a id="more"></a>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ echo $my_variable</span><br><span class="line"></span><br><span class="line">lvyun@yunlyz-mbp ~ $ my_variable=Hello</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $my_variable</span><br><span class="line">Hello</span><br></pre></td></tr></table></figure>
+
+<p> 如果设置含有空格的字符串,需要使用引号来界定字符的开始和结尾.没有引号, bash shell 会以为下一个词是另一个要执行的命令;</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ my_variable=Hello World</span><br><span class="line">-bash: World: command not found</span><br><span class="line">lvyun@yunlyz-mbp ~ $ my_variable=&quot;Hello World&quot;</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $my_variable</span><br><span class="line">Hello World</span><br></pre></td></tr></table></figure>
+
+<p> 当前方法设置的变量只能在当前进程中使用,如果另外一个 shell 进程则不可使用</p>
+<p> <em>注:所有的环境变量都使用大写字母;如果是自定义的局部变量或者 shell 脚本,则建议使用小写;这能够避免重定义系统环境变量可能带来的灾难.</em></p>
+</li>
+</ol>
+<ol start="2">
+<li><p>设置全局环境变量</p>
+<p> 设置全局环境变量可以使用 export 这个命令来完成;</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ my_variable=&quot;Hello World&quot;</span><br><span class="line">lvyun@yunlyz-mbp ~ $ export my_variable</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $my_variable</span><br><span class="line">Hello World</span><br></pre></td></tr></table></figure>
+
+<p> export 创建的环境变量是全局变量,能够在子进程中使用:</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ my_variable=&quot;Hello World&quot;</span><br><span class="line">lvyun@yunlyz-mbp ~ $ export my_variable</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $my_variable</span><br><span class="line">Hello World</span><br><span class="line">lvyun@yunlyz-mbp ~ $ bash</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $my_variable</span><br><span class="line">Hello World</span><br><span class="line">lvyun@yunlyz-mbp ~ $ exit</span><br><span class="line">exit</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $my_variable</span><br><span class="line">Hello World</span><br></pre></td></tr></table></figure>
+
+<p> ** <em>特别说明:在使用 export 创建全局环境变量导入的变量不需要加$*</em></p>
+<p> ** <em>注:如果在子进程中修改了改环境变量,那么这种修改只在子进程中有效,父进程中的值不受影响; 甚至子 shell 无法通过 export 来改变父 shell 中的全局环境变量.*</em></p>
+</li>
+</ol>
+<h3 id="删除环境变量"><a href="#删除环境变量" class="headerlink" title="删除环境变量"></a>删除环境变量</h3><h4 id="1-unset"><a href="#1-unset" class="headerlink" title="1. unset"></a>1. unset</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ unset my_variable</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $my_variable</span><br></pre></td></tr></table></figure>
+
+<p>如果在子 shell 中删除了环境变量,父 shell 的环境变量依然可用;</p>
+<h3 id="设置-PATH-环境变量"><a href="#设置-PATH-环境变量" class="headerlink" title="设置 PATH 环境变量"></a>设置 PATH 环境变量</h3><p>当你在 shell 输入一个外部命令时, shell 必须搜索系统来找到对应的程序; Path 环境变量定义了用于进行命令和程序查找的目录;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ echo $PATH</span><br><span class="line">/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:</span><br><span class="line">/Users/lvyun/tool/bin:/Users/lvyun/.composer/vendor/bin:</span><br><span class="line">/Users/lvyun/pear/bin</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意: PATH 环境变量中的目录使用冒号(:)分割;</strong></p>
+<p>如果命令或者程序的位置没有在 PATH 中,而没有使用绝对路径访问, shell 是没有办法找到命令的;会提示命令没有找到;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ myCommand</span><br><span class="line">-bash: myCommand: command not found</span><br></pre></td></tr></table></figure>
+
+<p>如何设置 PATH 环境变量,只需要引用原来的 PATH 值,然后再给这个字符串添加新目录即可.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ echo $PATH</span><br><span class="line">/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/lvyun/tool/bin:/Users/lvyun/.composer/vendor/bin:/Users/lvyun/pear/bin</span><br><span class="line">lvyun@yunlyz-mbp ~ $ PATH=$PATH:/Users/lvyun/bin</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $PATH</span><br><span class="line">/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Users/lvyun/tool/bin:/Users/lvyun/.composer/vendor/bin:/Users/lvyun/pear/bin:/Users/lvyun/bin</span><br></pre></td></tr></table></figure>
+
+<p>你会发现在 PATH 的最后面已经加上了路径,现在你可以目录结构中的任何位置执行程序;如果我们重启了机器,你会发现命令已经不能使用,要想命令持久化,可以把环境变量保存在$ HOME/.bashrc或者 $HOME/.bash_profile 中;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vim /Users/lvyun/.bashrc</span><br><span class="line">PATH=$PATH:/Users/lvyun/bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="定位系统环境变量"><a href="#定位系统环境变量" class="headerlink" title="定位系统环境变量"></a>定位系统环境变量</h3><p>当你登入 Linux 系统启动一个 bash shell 时,默认情况下 bash 会在几个文件中查找命令.这些文件称为启动文件或环境文件;</p>
+<p>启动 bash shell 有三种方式:</p>
+<pre><code>1. 登录时作为默认登录 shell
+2. 作为非登录 shell 的交互式 shell
+3. 作为运行脚本的非交互 shell</code></pre><h4 id="1-登录-shell"><a href="#1-登录-shell" class="headerlink" title="1.登录 shell"></a>1.登录 shell</h4><p>当你登录 Linux,bash shell 会作为登录 shell 启动. 登录 shell 会从5个不同的启动文件里读取命令:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line">1. /etc/profile</span><br><span class="line">2. $HOME/.bash_profile</span><br><span class="line">3. $HOME/.bashrc</span><br><span class="line">4. $HOME/.bash_login</span><br><span class="line">5. $HOME/.profile</span><br><span class="line"></span><br><span class="line">lvyun@yunlyz-mbp ~ $ ls -al | grep bash</span><br><span class="line">-rw-r--r--   1 lvyun  staff   7706  7 24 00:01 .bash_history</span><br><span class="line">-rw-r--r--@  1 lvyun  staff    832  7 16 09:01 .bash_profile</span><br><span class="line"></span><br><span class="line">/etc/profile 是系统默认的 bash shell 启动文件,没有用户登录时都会加载这个启动文件</span><br><span class="line"></span><br><span class="line">mac os 中/etc/profile是这个样子的,不同的系统可能会是不同的代码:</span><br><span class="line"></span><br><span class="line">lvyun@yunlyz-mbp ~ $ cat /etc/profile</span><br><span class="line"># System-wide .profile for sh(1)</span><br><span class="line"></span><br><span class="line">if [ -x /usr/libexec/path_helper ]; then</span><br><span class="line">       	eval `/usr/libexec/path_helper -s`</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">if [ &quot;$&#123;BASH-no&#125;&quot; != &quot;no&quot; ]; then</span><br><span class="line">       	[ -r /etc/bashrc ] &amp;&amp; . /etc/bashrc</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">centos:</span><br><span class="line"></span><br><span class="line">[root@yunlyz-tencent ~]# cat /etc/profile</span><br><span class="line"># /etc/profile</span><br><span class="line"></span><br><span class="line"># System wide environment and startup programs, for login setup</span><br><span class="line"># Functions and aliases go in /etc/bashrc</span><br><span class="line"></span><br><span class="line"># It&apos;s NOT a good idea to change this file unless you know what you</span><br><span class="line"># are doing. It&apos;s much better to create a custom.sh shell script in</span><br><span class="line"># /etc/profile.d/ to make custom changes to your environment, as this</span><br><span class="line"># will prevent the need for merging in future updates.</span><br><span class="line"></span><br><span class="line">pathmunge () &#123;</span><br><span class="line">    case &quot;:$&#123;PATH&#125;:&quot; in</span><br><span class="line">        *:&quot;$1&quot;:*)</span><br><span class="line">            ;;</span><br><span class="line">        *)</span><br><span class="line">            if [ &quot;$2&quot; = &quot;after&quot; ] ; then</span><br><span class="line">                PATH=$PATH:$1</span><br><span class="line">            else</span><br><span class="line">                PATH=$1:$PATH</span><br><span class="line">            fi</span><br><span class="line">    esac</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if [ -x /usr/bin/id ]; then</span><br><span class="line">    if [ -z &quot;$EUID&quot; ]; then</span><br><span class="line">        # ksh workaround</span><br><span class="line">        EUID=`id -u`</span><br><span class="line">        UID=`id -ru`</span><br><span class="line">    fi</span><br><span class="line">    USER=&quot;`id -un`&quot;</span><br><span class="line">    LOGNAME=$USER</span><br><span class="line">    MAIL=&quot;/var/spool/mail/$USER&quot;</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># Path manipulation</span><br><span class="line">if [ &quot;$EUID&quot; = &quot;0&quot; ]; then</span><br><span class="line">    pathmunge /usr/sbin</span><br><span class="line">    pathmunge /usr/local/sbin</span><br><span class="line">else</span><br><span class="line">    pathmunge /usr/local/sbin after</span><br><span class="line">    pathmunge /usr/sbin after</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">HOSTNAME=`/usr/bin/hostname 2&gt;/dev/null`</span><br><span class="line">HISTTIMEFORMAT=&apos;%F %T &apos;</span><br><span class="line">if [ &quot;$HISTCONTROL&quot; = &quot;ignorespace&quot; ] ; then</span><br><span class="line">    export HISTCONTROL=ignoreboth</span><br><span class="line">else</span><br><span class="line">    export HISTCONTROL=ignoredups</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">export PATH USER LOGNAME MAIL HOSTNAME HISTSIZE HISTCONTROL</span><br><span class="line"></span><br><span class="line"># By default, we want umask to get set. This sets it for login shell</span><br><span class="line"># Current threshold for system reserved uid/gids is 200</span><br><span class="line"># You could check uidgid reservation validity in</span><br><span class="line"># /usr/share/doc/setup-*/uidgid file</span><br><span class="line">if [ $UID -gt 199 ] &amp;&amp; [ &quot;`id -gn`&quot; = &quot;`id -un`&quot; ]; then</span><br><span class="line">    umask 002</span><br><span class="line">else</span><br><span class="line">    umask 022</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">for i in /etc/profile.d/*.sh ; do</span><br><span class="line">    if [ -r &quot;$i&quot; ]; then</span><br><span class="line">        if [ &quot;$&#123;-#*i&#125;&quot; != &quot;$-&quot; ]; then</span><br><span class="line">            . &quot;$i&quot;</span><br><span class="line">        else</span><br><span class="line">            . &quot;$i&quot; &gt;/dev/null</span><br><span class="line">        fi</span><br><span class="line">    fi</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line">unset i</span><br><span class="line">unset -f pathmunge</span><br><span class="line">export HISTTIMEFORMAT</span><br></pre></td></tr></table></figure>
+
+<p>centos中会迭代/etc/profile.d目录下的所有文件,文件如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@yunlyz-tencent ~]# ls -al /etc/profile.d</span><br><span class="line">total 88</span><br><span class="line">drwxr-xr-x.  2 root root  4096 Jul 18 18:43 .</span><br><span class="line">drwxr-xr-x. 91 root root 12288 Jul 24 23:44 ..</span><br><span class="line">-rw-r--r--   1 root root   771 Apr 13 04:24 256term.csh</span><br><span class="line">-rw-r--r--   1 root root   841 Apr 13 04:24 256term.sh</span><br><span class="line">-rw-r--r--   1 root root  1348 Dec  2  2016 abrt-console-notification.sh</span><br><span class="line">-rw-r--r--.  1 root root   660 Jun 10  2014 bash_completion.sh</span><br><span class="line">-rw-r--r--.  1 root root   196 Apr 29  2015 colorgrep.csh</span><br><span class="line">-rw-r--r--.  1 root root   201 Apr 29  2015 colorgrep.sh</span><br><span class="line">-rw-r--r--   1 root root  1741 Nov  5  2016 colorls.csh</span><br><span class="line">-rw-r--r--   1 root root  1606 Nov  5  2016 colorls.sh</span><br><span class="line">-rw-r--r--   1 root root  1706 Apr 13 04:24 lang.csh</span><br><span class="line">-rw-r--r--   1 root root  2703 Apr 13 04:24 lang.sh</span><br><span class="line">-rw-r--r--.  1 root root   123 Jul 31  2015 less.csh</span><br><span class="line">-rw-r--r--.  1 root root   121 Jul 31  2015 less.sh</span><br><span class="line">-rw-r--r--   1 root root   313 Jun 30  2012 qt-graphicssystem.csh</span><br><span class="line">-rw-r--r--   1 root root   379 Jun 13  2012 qt-graphicssystem.sh</span><br><span class="line">-rw-r--r--   1 root root   105 Dec 22  2016 vim.csh</span><br><span class="line">-rw-r--r--   1 root root   269 Dec 22  2016 vim.sh</span><br><span class="line">-rw-r--r--.  1 root root   164 Jan 28  2014 which2.csh</span><br><span class="line">-rw-r--r--.  1 root root   169 Jan 28  2014 which2.sh</span><br></pre></td></tr></table></figure>
+
+<p>我们会发现,有些文件与系统特定程序有关;大部分应用都会创建两个启动文件, .sh 是 bash shell 使用, .csh 是供 c shell 使用的.</p>
+<p>$HOME 目录下面的启动文件</p>
+<ul>
+<li>$HOME/.bash_profile</li>
+<li>$HOME/.bashrc</li>
+<li>$HOME/.bash_login</li>
+<li>$HOME/.profile</li>
+</ul>
+<p>大多数的 Linux 发行版只用到1-2两个启动文件;会依次按照顺序执行.</p>
+<h4 id="2-交互式-shell-进程"><a href="#2-交互式-shell-进程" class="headerlink" title="2. 交互式 shell 进程"></a>2. 交互式 shell 进程</h4><p>什么叫交互式 shell?如果你的 shell 不是在登录时启动的,那么你启动的 shell 叫做交互式 shell.</p>
+<p>如果 bash 作为<code>交互式 shell</code>启动,那么不会读取/etc/profile文件,只会检查<code>$HOME</code>目录下面的 <code>.bash_profile</code> 或者 <code>.bashrc</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[lvyun@yunlyz-tencent ~]$ cat .bashrc</span><br><span class="line"># .bashrc</span><br><span class="line"></span><br><span class="line"># Source global definitions</span><br><span class="line">if [ -f /etc/bashrc ]; then</span><br><span class="line">       	. /etc/bashrc</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line">for file in /etc/bash_completion.d/*; do</span><br><span class="line">    source $file</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"># Uncomment the following line if you don&apos;t like systemctl&apos;s auto-paging feature:</span><br><span class="line"># export SYSTEMD_PAGER=</span><br><span class="line"></span><br><span class="line"># User specific aliases and functions</span><br></pre></td></tr></table></figure>
+
+<p><code>.bashrc</code>文件有两个作用:</p>
+<ol>
+<li>查看<code>/etc</code>下通用 bashrc;在这里还可以看到还把bash_completion.d 命令自动补全这些文件给引入了;</li>
+<li>为用户提供一个定制的命令别名;</li>
+</ol>
+<h4 id="3-非交互式-shell"><a href="#3-非交互式-shell" class="headerlink" title="3. 非交互式 shell"></a>3. 非交互式 shell</h4><h3 id="数组变量"><a href="#数组变量" class="headerlink" title="数组变量"></a>数组变量</h3><p>数组是能够存储多个值得<code>变量</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ mytest=(one two three)</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $mytest</span><br><span class="line">one</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $&#123;mytest[2]&#125;</span><br><span class="line">three</span><br><span class="line">// 显示全部值</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $&#123;mytest[*]&#125;</span><br><span class="line">one two three</span><br><span class="line">// 改变某个索引值</span><br><span class="line">lvyun@yunlyz-mbp ~ $ mytest[2]=lvyun</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $&#123;mytest[*]&#125;</span><br><span class="line">one two lvyun</span><br><span class="line">// 删除某个索引</span><br><span class="line">lvyun@yunlyz-mbp ~ $ unset mytest[2]</span><br><span class="line">lvyun@yunlyz-mbp ~ $ echo $&#123;mytest[*]&#125;</span><br><span class="line">one two</span><br></pre></td></tr></table></figure>
+
+<h3 id="技巧"><a href="#技巧" class="headerlink" title="技巧"></a>技巧</h3><h4 id="技巧一"><a href="#技巧一" class="headerlink" title="技巧一"></a>技巧一</h4><p>关于涉及环境变量名时,什么时候该使用$,什么时候不该使用$?</p>
+<p>如果要用到环境变量,使用$;<br>如果要操作环境变量,不使用$;<br>但是,在使用 printenv 时例外,不要需要使用$</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ printenv HOME</span><br><span class="line">/Users/lvyun</span><br></pre></td></tr></table></figure>
+
+<h4 id="技巧二"><a href="#技巧二" class="headerlink" title="技巧二"></a>技巧二</h4><p>另外需要注意,变量名,等号和值之间没有空格;<br>如果有空格, bash shell 会把值当成一个单独的命令:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ my_variable = &quot;Hello World&quot;</span><br><span class="line">-bash: my_variable: command not found</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2017/09/13/Linux环境变量/" data-id="cjzxuk06w000s1lpcmkfcd33k"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/环境变量/">环境变量</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2017/09/13/composer自动加载原理/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Composer自动加载原理
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2017/09/13/Linux文件权限/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Linux文件权限</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    PHP全局变量global详解 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-PHP全局变量global详解" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      PHP全局变量global详解
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/10/16/PHP全局变量global详解/" class="article-date">
+  <time datetime="2018-10-16T14:36:07.000Z" itemprop="datePublished">2018-10-16</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>今天在阅读一个项目源码时候碰到了PHP的<code>global</code>关键词和<code>$GLOBALS</code>超全局变量的使用，看到这两个关键词的时候有点懵逼，虽然知道这是干嘛的，但是对其使用方式不是很清楚。特在此记录下学习的过程。</p>
+<a id="more"></a>
+
+<h2 id="变量范围"><a href="#变量范围" class="headerlink" title="变量范围"></a>变量范围</h2><p>变量的范围即它定义的上下文背景（也就是它的生效范围）。具体信息见<a href="http://php.net/manual/zh/language.variables.scope.php" target="_blank" rel="noopener">PHP文档-变量</a></p>
+<p>在用户自定义函数中，一个局部函数范围将被引入。</p>
+<p><strong>任何用于函数内部的变量按缺省情况将被限制在局部函数范围内。</strong></p>
+<p>也就是说在函数中无法直接使用全局变量，如果在函数内用到全局变量但是却没有声明，PHP会提示变量未定义。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$name = <span class="string">'lvyun'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">say</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"I am &#123;$name&#125;"</span>;</span><br><span class="line">&#125;</span><br><span class="line">say();</span><br><span class="line"></span><br><span class="line"><span class="comment">// output:</span></span><br><span class="line"><span class="comment">// PHP Notice:  Undefined variable: name in /data/php/chat/awesome on line 5</span></span><br><span class="line"><span class="comment">// I am %</span></span><br></pre></td></tr></table></figure>
+
+<p>PHP与 C 和 C++ 语言有点不相同，C语言中全局变量在函数中自动生效，不需要通过关键词来引用。</p>
+<p>了解变量的作用范围，才能理解全局变量。</p>
+<h2 id="声明全局变量"><a href="#声明全局变量" class="headerlink" title="声明全局变量"></a>声明全局变量</h2><p>使用global关键词</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$name = <span class="string">'lvyun'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">say</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $name;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"I am &#123;$name&#125;"</span>;</span><br><span class="line">&#125;</span><br><span class="line">say();</span><br><span class="line"></span><br><span class="line"><span class="comment">// output</span></span><br><span class="line"><span class="comment">// I am lvyun%</span></span><br></pre></td></tr></table></figure>
+
+<p>当然我们也可以使用<code>$GLOBALS</code>来代替<code>global</code>, <code>$GLOBALS</code>是超全局变量, 是一个关联数组:</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$name = <span class="string">'lvyun'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">say</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"I am &#123;$GLOBALS['name']&#125;"</span>;</span><br><span class="line">&#125;</span><br><span class="line">say();</span><br><span class="line"></span><br><span class="line"><span class="comment">// output</span></span><br><span class="line"><span class="comment">// I am lvyun%</span></span><br></pre></td></tr></table></figure>
+
+<p>如果我们没有在函数外预先声明变量<code>$name</code>，而在函数里面直接使用变量会如何呢？</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">say</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $name;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"I am &#123;$name&#125;"</span>;</span><br><span class="line">&#125;</span><br><span class="line">say();</span><br><span class="line"></span><br><span class="line"><span class="comment">// output</span></span><br><span class="line"><span class="comment">// I am %</span></span><br></pre></td></tr></table></figure>
+
+<p>如果我们在函数内声明全局变量，并且对变量赋值，在函数之外引用变量会如何？</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">say</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">global</span>  $name;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"I am &#123;$name&#125;\n"</span>;</span><br><span class="line">    $name = <span class="string">'lvyun-inner'</span>;</span><br><span class="line">&#125;</span><br><span class="line">say();</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"I am &#123;$name&#125;\n"</span>;</span><br><span class="line"><span class="comment">// output</span></span><br><span class="line"><span class="comment">// I am</span></span><br><span class="line"><span class="comment">// I am lvyun-inner</span></span><br></pre></td></tr></table></figure>
+
+<p>在函数外对函数内声明的全局变量重新赋值会如何？</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">say</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">global</span>  $name;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"I am &#123;$name&#125;\n"</span>;</span><br><span class="line">    $name = <span class="string">'lvyun-inner'</span>;</span><br><span class="line">&#125;</span><br><span class="line">say();</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"I am &#123;$name&#125;\n"</span>;</span><br><span class="line">$name = <span class="string">'lvyun-outer'</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"I am &#123;$name&#125;\n"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// output</span></span><br><span class="line"><span class="comment">// I am</span></span><br><span class="line"><span class="comment">// I am lvyun-inner</span></span><br><span class="line"><span class="comment">// I am lvyun-outer</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>在函数中声明全局变量后，对变量的所有引用都会指向其全部版本。</strong></p>
+<h2 id="释放全局变量"><a href="#释放全局变量" class="headerlink" title="释放全局变量"></a>释放全局变量</h2><p><code>global</code>和<code>$GLOBALS</code>用<code>unset</code>函数释放变量会发生什么？</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$name = <span class="string">'lvyun'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">change</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $name;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"(1)I am &#123;$name&#125;\n"</span>;</span><br><span class="line">    <span class="keyword">unset</span>($name);</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"(2)I am &#123;$name&#125;\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">change();</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"(3)I am &#123;$name&#125;\n"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// output</span></span><br><span class="line"><span class="comment">// (1)I am lvyun</span></span><br><span class="line"><span class="comment">// PHP Notice:  Undefined variable: name in /data/php/chat/awesome on line 49</span></span><br><span class="line"><span class="comment">// (2)I am</span></span><br><span class="line"><span class="comment">// (3)I am lvyun</span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>unset</code>之后，函数内的全局变量<code>$name</code>无法使用，而且函数外的<code>$name</code>任然存在。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$name = <span class="string">'lvyun'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">change</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"(1)I am &#123;$GLOBALS['name']&#125;\n"</span>;</span><br><span class="line">    <span class="keyword">unset</span>($GLOBALS[<span class="string">'name'</span>]);</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"(2)I am &#123;$GLOBALS['name']&#125;\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">change();</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"(3)I am &#123;$name&#125;\n"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// output</span></span><br><span class="line"><span class="comment">// (1)I am lvyun</span></span><br><span class="line"><span class="comment">// PHP Notice:  Undefined index: name in /data/php/chat/awesome on line 61</span></span><br><span class="line"><span class="comment">// (2)I am</span></span><br><span class="line"><span class="comment">// PHP Notice:  Undefined variable: name in /data/php/chat/awesome on line 65</span></span><br><span class="line"><span class="comment">// (3)I am</span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>unset</code>之后，函数内外的全局变量<code>$name</code>都无法使用。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">$name = <span class="string">'lvyun'</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">change</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $name;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"(1)I am &#123;$name&#125;\n"</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"(2)I am &#123;$GLOBALS['name']&#125;\n"</span>;</span><br><span class="line">    <span class="keyword">unset</span>($$GLOBALS[<span class="string">'name'</span>]);</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"(3)I am &#123;$name&#125;\n"</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"(4)I am &#123;$GLOBALS['name']&#125;\n"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">change();</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"(5)I am &#123;$name&#125;\n"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// output</span></span><br><span class="line"><span class="comment">// (1)I am lvyun</span></span><br><span class="line"><span class="comment">// (2)I am lvyun</span></span><br><span class="line"><span class="comment">// (3)I am lvyun</span></span><br><span class="line"><span class="comment">// PHP Notice:  Undefined index: name in /data/php/chat/awesome on line 75</span></span><br><span class="line"><span class="comment">// (4)I am</span></span><br><span class="line"><span class="comment">// PHP Notice:  Undefined variable: name in /data/php/chat/awesome on line 79</span></span><br><span class="line"><span class="comment">// (5)I am</span></span><br></pre></td></tr></table></figure>
+
+<p>在<code>unset</code>后，函数内的变量<code>$name</code>任然可以使用，而超全局变量<code>$GLOBALS[&#39;name&#39;]</code>却不能使用。</p>
+<p>通过上面说明测试说明：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">global</span> $var 是申明一个局部函数变量，函数中的 $var 和 全局 $var 具有相同引用。</span><br><span class="line"></span><br><span class="line">$GLOBALS[<span class="string">'var'</span>] 则指的是变量本身。</span><br><span class="line"></span><br><span class="line"><span class="keyword">global</span> $var 等价于 $var = &amp;$GLOBALS[<span class="string">'var'</span>]</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>这里引用鸟哥在 <a href="http://www.laruence.com/2008/08/24/377.html" target="_blank" rel="noopener">PHP源码分析之 GLOBAL 关键字</a> 的一句话：</p>
+<p><strong>如果你global了一个变量，那么 Zend 就会去全局 symbol_table 去寻找，如果找不到，就会在全局 symbol_table 中分配相应的变量。</strong></p>
+</blockquote>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/10/16/PHP全局变量global详解/" data-id="cjzxuk07600151lpc3he0adcm"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/10/16/字符编码笔记/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            字符编码笔记
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/10/16/使用Swoole搭建TCP聊天室/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">使用Swoole搭建TCP聊天室</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

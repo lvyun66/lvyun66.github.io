@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Golang文件操作方式 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Golang文件操作方式" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Golang文件操作方式
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/03/21/Golang文件操作方式/" class="article-date">
+  <time datetime="2018-03-21T10:57:03.000Z" itemprop="datePublished">2018-03-21</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>文件的操作是开发中常遇到的问题，打开文件读取内容或者是把内容写入到文件中，都会用到文件的操作；如果不熟悉文件操作，会降低开发效率。下面介绍开发中会用到的几种Go文件操作方式。</p>
+<a id="more"></a>
+<h2 id="File概念"><a href="#File概念" class="headerlink" title="File概念"></a>File概念</h2><p>GO中文件操作是基于file的，go会判断操作系统选择对应的<code>*file</code>，其中window与unix下的区别主要在于<code>unix</code>多一个<code>nonblock</code>，也就是非阻塞。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> File <span class="keyword">struct</span> &#123;</span><br><span class="line">    *file <span class="comment">// os specific</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// window</span></span><br><span class="line"><span class="keyword">type</span> file <span class="keyword">struct</span> &#123;</span><br><span class="line">	pfd     poll.FD  <span class="comment">// 文件句柄</span></span><br><span class="line">	name    <span class="keyword">string</span>   <span class="comment">// 文件名称</span></span><br><span class="line">	dirinfo *dirInfo <span class="comment">// nil unless directory being read</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// unix</span></span><br><span class="line"><span class="keyword">type</span> file <span class="keyword">struct</span> &#123;</span><br><span class="line">	pfd      poll.FD</span><br><span class="line">	name     <span class="keyword">string</span></span><br><span class="line">	dirinfo  *dirInfo <span class="comment">// nil unless directory being read</span></span><br><span class="line">	nonblock <span class="keyword">bool</span>     <span class="comment">// whether we set nonblocking mode</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="OS包"><a href="#OS包" class="headerlink" title="OS包"></a>OS包</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CreateByOS 使用os库创建文件</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CreateByOS</span><span class="params">()</span></span> &#123;</span><br><span class="line">	file, _ := os.Create(<span class="string">"io_test.txt"</span>)</span><br><span class="line">	<span class="keyword">defer</span> file.Close()</span><br><span class="line">	file.WriteString(<span class="string">"Created by os create.\n"</span>)</span><br><span class="line">	file.Write([]<span class="keyword">byte</span>(<span class="string">"Write something byte to io_test.txt!\n"</span>))</span><br><span class="line"></span><br><span class="line">	buf := bytes.Buffer&#123;&#125;</span><br><span class="line">	buf.Write([]<span class="keyword">byte</span>(<span class="string">"写入时间："</span>))</span><br><span class="line">	buf.Write([]<span class="keyword">byte</span>(time.Now().Format(<span class="string">"2006-01-02 15:04:05"</span>)))</span><br><span class="line"></span><br><span class="line">	file.Write(buf.Bytes())</span><br><span class="line">	file.WriteAt([]<span class="keyword">byte</span>(<span class="string">"这是中间插入的"</span>), <span class="number">7</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ReadByOS 使用os库读取文件</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadByOS</span><span class="params">()</span></span> &#123;</span><br><span class="line">	txt := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">1024</span>)</span><br><span class="line">	file, err := os.Open(<span class="string">"io_test.txt"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	_, err = file.Read(txt)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(<span class="keyword">string</span>(txt))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ioutil包"><a href="#ioutil包" class="headerlink" title="ioutil包"></a>ioutil包</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WriteByIOUtil</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ioutil.WriteFile(<span class="string">"io_test.txt"</span>, []<span class="keyword">byte</span>(<span class="string">"这是用ioutil包写入的信息"</span>), <span class="number">0666</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadByIOUtil</span><span class="params">()</span></span> &#123;</span><br><span class="line">	txt, _ := ioutil.ReadFile(<span class="string">"io_test.txt"</span>)</span><br><span class="line">	fmt.Println(<span class="keyword">string</span>(txt))</span><br><span class="line"></span><br><span class="line">	file, _ := os.Open(<span class="string">"io_test.txt"</span>)</span><br><span class="line">	txt, _ = ioutil.ReadAll(file)</span><br><span class="line">	fmt.Println(<span class="keyword">string</span>(txt))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果看过源码会发现，<code>ioutil.ReadFile()</code>最终是调用<code>ioutil.readAll()</code>函数；而<code>ioutil.ReadAll()</code>的底层也是调用<code>ioutil.readAll()</code>。</p>
+<p><code>ReadFile</code>相对于<code>ReadAll</code>只是多了一部打开文件操作，同时判断是否为文件。<code>ReadFile</code>默认的切片大小为<code>文件Size + bytes.MinRead512</code>，因此在扩展切片的时候不需要重新分配地址，速度会比<code>ReadAll()</code>快，效率高。因此读取整个文件建议使用<code>ReadFile</code>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buf := bytes.NewBuffer(<span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">0</span>, capacity))</span><br></pre></td></tr></table></figure>
+
+<p>而其中<code>readAll()</code>又是调用<code>bytes包</code>的<code>ReadFrom()</code>函数，可以认为<code>ioutil</code>是在<code>bytes</code>之上在封装了一层。</p>
+<h2 id="bufio"><a href="#bufio" class="headerlink" title="bufio"></a>bufio</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WriteByBufio</span><span class="params">()</span></span> &#123;</span><br><span class="line">	file, _ := os.OpenFile(<span class="string">"io_test.txt"</span>, os.O_RDWR|os.O_APPEND, <span class="number">0666</span>)</span><br><span class="line">	buf := bufio.NewWriter(file)</span><br><span class="line">	buf.WriteString(<span class="string">"这是使用bufio追加的信息！\n"</span>)</span><br><span class="line">	buf.Flush()</span><br><span class="line">	<span class="keyword">defer</span> file.Close()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ReadByBufio</span><span class="params">()</span></span> &#123;</span><br><span class="line">	file, _ := os.Open(<span class="string">"io_test.txt"</span>)</span><br><span class="line">	buf := bufio.NewReader(file)</span><br><span class="line">	txt := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">1024</span>)</span><br><span class="line">	buf.Read(txt)</span><br><span class="line">	fmt.Println(<span class="keyword">string</span>(txt))</span><br><span class="line">	<span class="keyword">defer</span> file.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Read reads data into p.</span></span><br><span class="line"><span class="comment">// It returns the number of bytes read into p.</span></span><br><span class="line"><span class="comment">// The bytes are taken from at most one Read on the underlying Reader,</span></span><br><span class="line"><span class="comment">// hence n may be less than len(p).</span></span><br><span class="line"><span class="comment">// At EOF, the count will be zero and err will be io.EOF.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Reader)</span> <span class="title">Read</span><span class="params">(p []<span class="keyword">byte</span>)</span> <span class="params">(n <span class="keyword">int</span>, err error)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 切片长度</span></span><br><span class="line">	n = <span class="built_in">len</span>(p)</span><br><span class="line">    <span class="comment">// 如果切片长度为0，则返回0和nil</span></span><br><span class="line">	<span class="keyword">if</span> n == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, b.readErr()</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// r w是buf读取的位置，如果r==w，表示是起点</span></span><br><span class="line">	<span class="keyword">if</span> b.r == b.w &#123;</span><br><span class="line">        <span class="comment">// 开始时有错误直接抛出</span></span><br><span class="line">		<span class="keyword">if</span> b.err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>, b.readErr()</span><br><span class="line">		&#125;</span><br><span class="line">        <span class="comment">// 如果切片长度 &gt; 缓冲长度，直接赋值给p，避免赋值；</span></span><br><span class="line">        <span class="comment">// 正常情况应该先赋值给b.buf, 然后通过赋值给p，这样造成了资源的浪费</span></span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(p) &gt;= <span class="built_in">len</span>(b.buf) &#123;</span><br><span class="line">			<span class="comment">// Large read, empty buffer.</span></span><br><span class="line">			<span class="comment">// Read directly into p to avoid copy.</span></span><br><span class="line">			n, b.err = b.rd.Read(p)</span><br><span class="line">			<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123;</span><br><span class="line">				<span class="built_in">panic</span>(errNegativeRead)</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> n &gt; <span class="number">0</span> &#123;</span><br><span class="line">				b.lastByte = <span class="keyword">int</span>(p[n<span class="number">-1</span>])</span><br><span class="line">				b.lastRuneSize = <span class="number">-1</span></span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> n, b.readErr()</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// One read.</span></span><br><span class="line">		<span class="comment">// Do not use b.fill, which will loop.</span></span><br><span class="line">		b.r = <span class="number">0</span></span><br><span class="line">		b.w = <span class="number">0</span></span><br><span class="line">		n, b.err = b.rd.Read(b.buf)</span><br><span class="line">		<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(errNegativeRead)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> n == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>, b.readErr()</span><br><span class="line">		&#125;</span><br><span class="line">		b.w += n</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// copy as much as we can</span></span><br><span class="line">	n = <span class="built_in">copy</span>(p, b.buf[b.r:b.w])</span><br><span class="line">	b.r += n</span><br><span class="line">	b.lastByte = <span class="keyword">int</span>(b.buf[b.r<span class="number">-1</span>])</span><br><span class="line">	b.lastRuneSize = <span class="number">-1</span></span><br><span class="line">	<span class="keyword">return</span> n, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/03/21/Golang文件操作方式/" data-id="cjzxuk06i000k1lpc5sqal1ql"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/">Golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/文件/">文件</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/03/23/PHP中array_map、array_walk和array_filter的区别/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            PHP数组函数
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/03/15/Git的基本用法/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Git基本用户</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

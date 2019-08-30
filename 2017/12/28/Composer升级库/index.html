@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Composer升级库 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Composer升级库" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Composer升级库
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2017/12/28/Composer升级库/" class="article-date">
+  <time datetime="2017-12-28T14:38:50.000Z" itemprop="datePublished">2017-12-28</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Composer/">Composer</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <h2 id="Composer升级库"><a href="#Composer升级库" class="headerlink" title="Composer升级库"></a>Composer升级库</h2><a id="more"></a>
+<h3 id="required"><a href="#required" class="headerlink" title="required"></a>required</h3><p>增加一个新的依赖包到当前目录的<code>composer.json</code>，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer require xxxx/xxx:tag</span><br></pre></td></tr></table></figure>
+
+<p>在新增或者更新依赖时，修改后的依赖关系将被安装和更新。</p>
+<h3 id="install"><a href="#install" class="headerlink" title="install"></a>install</h3><p>从当前目录的<code>composer.json</code>读取，处理依赖关系并且安装到当前目录的<code>vendor</code>目录下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer install</span><br></pre></td></tr></table></figure>
+
+<p>如果目录下存在<code>composer.lock</code>文件，则会从此文件读取依赖。这样做的原因的是确保每个使用者都能使用相同的依赖库，保证环境的一致性。</p>
+<h3 id="update"><a href="#update" class="headerlink" title="update"></a>update</h3><p>获取依赖的最新最新版本或者指定版本信息，并且更新<code>composer.lock</code>，但是不会更新<code>composer.json</code>文件。</p>
+<h3 id="三者之间的区别"><a href="#三者之间的区别" class="headerlink" title="三者之间的区别"></a>三者之间的区别</h3><p><code>update</code>，会根据语义化版本号来升级，例如如果<code>composer.json</code>定义为<code>^8.0</code>，则会自动升级到<code>8.0-9.0</code>之间最新的版本。PS：<code>league/csv</code>的V8版本中最高为<code>v8.2.2</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@b1 yesdatphp]# composer update league/csv</span><br><span class="line"></span><br><span class="line">Do not run Composer as root/super user! See https://getcomposer.org/root for details</span><br><span class="line">Loading composer repositories with package information</span><br><span class="line">Updating dependencies (including require-dev)</span><br><span class="line">Package operations: 0 installs, 1 update, 0 removals</span><br><span class="line">  - Updating league/csv (8.2.1 =&gt; 8.2.2): Downloading (100%)</span><br><span class="line">Writing lock file</span><br><span class="line">Generating autoload files</span><br></pre></td></tr></table></figure>
+
+<p>当最新的版本号不在<code>composer.json</code>声明的语义化版本范围时，使用<code>composer update</code>会无效。例如<code>filsh/yii2-oauth2-server</code>在<code>composer.json</code>中的定义为<code>&quot;filsh/yii2-oauth2-server&quot;: &quot;v1.0&quot;</code>，直接使用<code>composer update</code>升级会失败。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@b1 yesdatphp]# composer update filsh/yii2-oauth2-server</span><br><span class="line"></span><br><span class="line">Do not run Composer as root/super user! See https://getcomposer.org/root for details</span><br><span class="line">Loading composer repositories with package information</span><br><span class="line">Updating dependencies (including require-dev)</span><br><span class="line">Nothing to install or update</span><br><span class="line">Generating autoload files</span><br></pre></td></tr></table></figure>
+
+<p>要想升级到最新的版本，我们需要重新声明依赖，这样会覆盖<code>composer.json</code>已经声明的依赖，并且在安装完成之后同步更新<code>composer.lock</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer require filsh/yii2-oauth2-server:~2.0</span><br></pre></td></tr></table></figure>
+
+<p>这样会自动安装最新的依赖库到vendor下面。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>使用<code>composer</code>升级库：</p>
+<ol>
+<li><code>update</code> 只会更新到<code>composer.json</code>定义的语义化版本的范围内最新的版本，如果超过范围或者没有，这不会做更新；</li>
+<li><code>require</code> 当更新大版本时或者是超出了定义的版本时，使用<code>composer require</code>。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2017/12/28/Composer升级库/" data-id="cjzxuk05x00051lpczvue5t2d"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Composer/">Composer</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/02/13/Golang中Timer的实现/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Golang中Timer的实现
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2017/12/28/composer升级库/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Composer升级库</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

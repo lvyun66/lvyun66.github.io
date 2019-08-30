@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Linux文件权限 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Linux文件权限" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux文件权限
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2017/09/13/Linux文件权限/" class="article-date">
+  <time datetime="2017-09-13T19:42:23.000Z" itemprop="datePublished">2017-09-13</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <h2 id="Linux文件权限"><a href="#Linux文件权限" class="headerlink" title="Linux文件权限"></a>Linux文件权限</h2><h3 id="Linux-安全性"><a href="#Linux-安全性" class="headerlink" title="Linux 安全性"></a>Linux 安全性</h3><p>Linux允许用户和组根据每个文件和目录的安全性设置来访问文件;</p>
+<a id="more"></a>
+<p>Linux安全系统的核心是用户账户.每个能进入 Linux 系统的用户都会被分配唯一的用户账户;用户对系统中各个对象的访问取决于他们登录系统时用的账户.</p>
+<ol>
+<li>/etc/passwd 文件</li>
+</ol>
+<p>Linux 使用<code>/etc/passwd</code>文件来将用户的登录名匹配到对应的 UID 值;文件部分信息如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">lvyun@yunlyz-mbp ~ $ cat /etc/passwd</span><br><span class="line">##</span><br><span class="line"># User Database</span><br><span class="line">#</span><br><span class="line"># Note that this file is consulted directly only when the system is running</span><br><span class="line"># in single-user mode.  At other times this information is provided by</span><br><span class="line"># Open Directory.</span><br><span class="line">#</span><br><span class="line"># See the opendirectoryd(8) man page for additional information about</span><br><span class="line"># Open Directory.</span><br><span class="line">##</span><br><span class="line">nobody:*:-2:-2:Unprivileged User:/var/empty:/usr/bin/false</span><br><span class="line">root:*:0:0:System Administrator:/var/root:/bin/sh</span><br><span class="line">daemon:*:1:1:System Services:/var/root:/usr/bin/false</span><br></pre></td></tr></table></figure>
+
+<p><code>/etc/passwd</code>文件包含了以下信息:</p>
+<pre><code>1. 用户登录名
+2. 用户密码
+3. 用户账户的 UID
+4. 用户账户的组 ID(GID)
+5. 用户账户的文本描述
+6. 用户 HOME 目录的位置
+7. 用户默认的 shell</code></pre><p>为了保证安全,文件中的密码都被设置成了<code>*</code>,但这并不说明所有用户的密码都相同.</p>
+<p>root 用户账户是 Linux 系统管理员,固定分配给它的 UID 是<code>0</code>;</p>
+<p>运行在 Linux 服务器后台的几乎所有服务都有自己的用户账户;这样做的目的在于,及时有人攻入某个服务,也无法访问整个系统.</p>
+<p>Linux 为系统预留了500以下的 UID 值;</p>
+<ol start="2">
+<li>/etc/shadow 文件</li>
+</ol>
+<p>/etc/shadow 保存了 Linux 用户账户密码;只有 root 用户才能访问/ etc/shadow 文件.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@yunlyz-tencent ~]# cat /etc/shadow</span><br><span class="line">root:$1$2msPQtx7$i3n7.qer4xu/RnbfYOZId/:17326:0:99999:7:::</span><br></pre></td></tr></table></figure>
+
+<p><code>/etc/shadow</code> 每条记录中都有9个字段:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1. 与/etc/passwd文件中登录名对应字段的登录名</span><br><span class="line">2. 加密后的密码</span><br><span class="line">3. 自上次修改密码后过去的加密天数</span><br><span class="line">4. 多少天后可以修改密码</span><br><span class="line">5. 多少天后必须更改密码</span><br><span class="line">6. 密码过期前提前多少天提醒用户</span><br><span class="line">7. 密码过期后多少天禁止用户账户</span><br><span class="line">8. 用户账户被禁止日期</span><br><span class="line">9. 预留字段以备将来使用</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加新用户"><a href="#添加新用户" class="headerlink" title="添加新用户"></a>添加新用户</h3><p>用来向 Linux 添加新用户的主要工具是 <code>useradd</code>.这个命令可以一次性创建新用户账户以及设置用户 HOME 目录结构.系统默认值被设置在<code>/etc/default/useradd</code>中; 可以使用 -D 查看 Linux 系统中的这些默认值.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@yunlyz-tencent ~]# useradd -D</span><br><span class="line">GROUP=100				// 新用户会被添加到 GID 为100的公共组</span><br><span class="line">HOME=/home			// 新用户的 HOME 目录会位于/home/loginname</span><br><span class="line">INACTIVE=-1			// 新用户密码过期后不会被禁用</span><br><span class="line">EXPIRE=				// 新用户账户没有设置过期时间</span><br><span class="line">SHELL=/bin/bash		// 将 bash shell 作为默认 shell</span><br><span class="line">SKEL=/etc/skel		// 将/etc/skel目录下的内容复制到 HOME 目录下</span><br><span class="line">CREATE_MAIL_SPOOL=yes	// 系统为改用户在 mail 目录下创建一个用户接受邮件的目录</span><br></pre></td></tr></table></figure>
+
+<p><code>/etc/skel</code> 目录下都是一些启动文件:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[root@yunlyz-tencent ~]ls -al /etc/skel</span><br><span class="line">total 32</span><br><span class="line">drwxr-xr-x.  3 root root  4096 Jul 18 18:42 .</span><br><span class="line">drwxr-xr-x. 91 root root 12288 Jul 24 23:44 ..</span><br><span class="line">-rw-r--r--   1 root root    18 Dec  7  2016 .bash_logout</span><br><span class="line">-rw-r--r--   1 root root   193 Dec  7  2016 .bash_profile</span><br><span class="line">-rw-r--r--   1 root root   231 Dec  7  2016 .bashrc</span><br><span class="line">drwxr-xr-x   4 root root  4096 Jul  4 20:26 .mozilla</span><br></pre></td></tr></table></figure>
+
+<p><code>useradd</code>参数:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">-c comment		给新用户添加备注</span><br><span class="line">-d home_dir		为主目录指定一个名词(如果不想使用登录名作为主目录名)</span><br><span class="line">-e expire_date	用 YYYY-MM-DD 指定用户过期日期</span><br><span class="line">-f inactive_date	 指定用户账户多少天后禁用</span><br><span class="line">-g initial_group	指定用户登录组 GID 或者组名</span><br><span class="line">-G group			指定用户登录组之外所属的一个或者多个附加组</span><br><span class="line">-k					必须与-m一起使用,将/etc/skel 目录内容复制到用户的 HOME 目录</span><br><span class="line">-m					创建用户 HOME 目录</span><br><span class="line">-M					不创建用户 HOME 目录</span><br><span class="line">-n					创建一个与用户名相同的新组</span><br><span class="line">-r					创建系统账户</span><br><span class="line">-p	passwd			为用户指定默认密码</span><br><span class="line">-s shell			指定默认 shell</span><br><span class="line">-u	uid				 为账户指定唯一 UID</span><br></pre></td></tr></table></figure>
+
+<p>如果你想修改新用户默认系统设置,可以使用如下设置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@yunlyz-tencent ~]# useradd -D -s /bin/test</span><br><span class="line">[root@yunlyz-tencent ~]# useradd -D</span><br><span class="line">GROUP=100</span><br><span class="line">HOME=/home</span><br><span class="line">INACTIVE=-1</span><br><span class="line">EXPIRE=</span><br><span class="line">SHELL=/bin/test</span><br><span class="line">SKEL=/etc/skel</span><br><span class="line">CREATE_MAIL_SPOOL=yes</span><br></pre></td></tr></table></figure>
+
+<p>这样创建的新用户默认使用的 shell 就是为<code>/bin/test</code>了.</p>
+<h3 id="删除用户"><a href="#删除用户" class="headerlink" title="删除用户"></a>删除用户</h3><p><code>userdel</code>命令只会删除<code>/etc/passwd</code>文件中的用户信息,而不会删除系统中属于该账户的任何文件;</p>
+<p>加上<code>-r</code>,<code>userdel</code>会删除用户的 HOME 目录以及邮件目录</p>
+<h3 id="修改用户"><a href="#修改用户" class="headerlink" title="修改用户"></a>修改用户</h3><p>Linux 提供不同工具来修改用户账户信息.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">usermod	修改用户账户的字段,还可以指定主要组以及附加组的所属关系</span><br><span class="line">passwd	 修改已有用户的密码</span><br><span class="line">chpasswd	 从文件读取登录名和密码对,并更新密码</span><br><span class="line">chage	 修改密码过期时间</span><br><span class="line">chfn	 修改用户账户的备注信息</span><br><span class="line">chsh	 修改用户账户的默认登录 shell</span><br></pre></td></tr></table></figure>
+
+<h4 id="1-usermod"><a href="#1-usermod" class="headerlink" title="1. usermod"></a>1. usermod</h4><p>usermod 是用户账户修改工具中最强大的一个;能用来修改/etc/passwd文件中的大部分字段,只需要加上对应参数(<code>-c</code>修改用户账户备注, <code>-e</code>修改用户账户过期时间, <code>-p</code>修改用户账户密码, <code>-g</code>修改默认的登录组)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-U	解除锁定,是用户能够登录</span><br><span class="line">-L	锁定用户,无法登录</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-passwd-和-chpasswd"><a href="#2-passwd-和-chpasswd" class="headerlink" title="2. passwd 和 chpasswd"></a>2. passwd 和 chpasswd</h4><p>更改用户密码简便方法<code>passwd</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@yunlyz-tencent ~]# passwd test</span><br><span class="line">Changing password for user test.</span><br><span class="line">New password:</span><br><span class="line">Retype new password:</span><br><span class="line">passwd: all authentication tokens updated successfully.</span><br></pre></td></tr></table></figure>
+
+<p>如果需要为系统中大量用户修改密码,<code>chpasswd</code>命令可以事半功倍;<code>chpasswd</code>能从标准输入自动读取登录名和密码对(冒号分割),给密码加密,然后为账户设置;可以用重定向命令将含有 userID:passwd 对的文件重定向给该命令.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@yunlyz-tencent ~]# chpasswd &lt; passwd.txt</span><br><span class="line">[root@yunlyz-tencent ~]#</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-chsh-chcn-和-chage"><a href="#3-chsh-chcn-和-chage" class="headerlink" title="3. chsh,chcn 和 chage"></a>3. chsh,chcn 和 chage</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@yunlyz-tencent ~]# chsh -s /bin/csh test</span><br><span class="line">Changing shell for test.</span><br><span class="line">Shell changed.</span><br></pre></td></tr></table></figure>
+
+<h3 id="Linux-组"><a href="#Linux-组" class="headerlink" title="Linux 组"></a>Linux 组</h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2017/09/13/Linux文件权限/" data-id="cjzxuk06n000q1lpc9az27pmk"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/文件权限/">文件权限</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2017/09/13/Linux环境变量/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Linux 环境变量
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2017/09/10/Hello-World/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Hello World</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

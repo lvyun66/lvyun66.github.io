@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    MySQL InnoDB锁 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Mysql-InnoDB锁" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      MySQL InnoDB锁
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/07/06/Mysql-InnoDB锁/" class="article-date">
+  <time datetime="2018-07-06T09:40:44.000Z" itemprop="datePublished">2018-07-06</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/MySQL/">MySQL</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>本文主要讨论的是Mysql中InnoDB分支, 所有关于锁的讨论都是基于InnoDB, MyISAM不做讨论.</p>
+<p>参考地址： <a href="https://dev.mysql.com/doc/refman/5.6/en/innodb-locking.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/5.6/en/innodb-locking.html</a></p>
+<a id="more"></a>
+<h2 id="Mysql-InnoDB锁的分类"><a href="#Mysql-InnoDB锁的分类" class="headerlink" title="Mysql InnoDB锁的分类"></a>Mysql InnoDB锁的分类</h2><h3 id="共享锁-shared-lock-和排它锁-exclusive-lock"><a href="#共享锁-shared-lock-和排它锁-exclusive-lock" class="headerlink" title="共享锁(shared lock)和排它锁(exclusive lock)"></a>共享锁(shared lock)和排它锁(exclusive lock)</h3><p>InnoDB的共享锁(shared lock)和排它锁(exclusive lock)都实现了标准的行锁。</p>
+<p><code>共享锁(shared lock)</code>也就是<code>S锁</code>，允许持有S锁的事务读取行数据；<br><code>排它锁(exclusive lock)</code>也称<code>X锁</code>，允许持有X锁的事务更新或删除行数据；</p>
+<p>事务T1对行<code>r</code>持有S锁，则来自事务T2的处理如下：</p>
+<ol>
+<li>如果T2对行申请S锁，则会被立即授权，T1、T2同时对行<code>r</code>持有S锁；</li>
+<li>如果T2对行申请X锁，则不会被授权。</li>
+</ol>
+<p>事务T1对行<code>r</code>持有X锁，则事务T2不管申请S锁还是X锁都不会背授权，知道T1释放对<code>r</code>的X锁。</p>
+<h3 id="意向锁-intention-lock"><a href="#意向锁-intention-lock" class="headerlink" title="意向锁(intention lock)"></a>意向锁(intention lock)</h3><p>InnoDB支持多粒度锁，允许行锁和表锁共存。例如<code>LOCK TABLE ... WRITE</code>等语句在指定的表上采用独占所(X锁)。为什么实现多个粒度级别的锁，InnoDB使用意图锁。意图锁是表级锁定，指示事务稍后对表中的行锁类型(共享S或独占X)。意向锁包括：</p>
+<ol>
+<li>意向共享锁(IS)，表示事务将在表中的各个行上设置共享锁；</li>
+<li>意向排它锁(IX)，表示事务将在表中的各个行上设置排他锁。</li>
+</ol>
+<p>例如： <code>select ... lock in share mode</code>设置<code>IS</code>锁，<code>select ... for update</code>设置<code>IX</code>锁。</p>
+<p>在事务获取表中行的共享锁之前，它必须先获取表上的IS锁。<br>在事务获取表中行的排他锁之前，它必须先获取表上的IX锁。</p>
+<p>表级类型锁定兼容性：</p>
+<table>
+<thead>
+<tr>
+<th>T1/T2</th>
+<th>S</th>
+<th>X</th>
+<th>IS</th>
+<th>IX</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>S</td>
+<td>Y</td>
+<td>N</td>
+<td>Y</td>
+<td>N</td>
+</tr>
+<tr>
+<td>X</td>
+<td>N</td>
+<td>N</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr>
+<td>IS</td>
+<td>Y</td>
+<td>N</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+<tr>
+<td>IX</td>
+<td>N</td>
+<td>N</td>
+<td>Y</td>
+<td>Y</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>说明, Y表示兼容， N表示不兼容</p>
+</blockquote>
+<p>如果事务与现有锁类型兼容，则授权；但是如果与现有锁冲突，则不会被授权。事务一直等待知道冲突的锁类型被释放。如果请求锁类型与现有类型冲突而不能被授权，会导致死锁，则会发生错误。</p>
+<p>意向锁不会阻塞出完整表之外的任何内容。意向锁的主要目的是表名某个事物正在锁定的行或者是将要上锁的行。</p>
+<h3 id="记录锁-record-lock"><a href="#记录锁-record-lock" class="headerlink" title="记录锁(record lock)"></a>记录锁(record lock)</h3><p>记录锁是对索引记录的锁定。例如： <code>select c1 from t where c1 = 10 for update;</code>防止其他事物插入、更新或删除t.c1 = 10 的行。</p>
+<p>即时表没有索引，<code>记录锁(record lock)</code>任然会锁定记录。对于这种情况，InnoDB会创建一个隐藏的聚簇索引，并使用此索引进行记录锁定。</p>
+<h3 id="间隙锁-gap-lock"><a href="#间隙锁-gap-lock" class="headerlink" title="间隙锁(gap lock)"></a>间隙锁(gap lock)</h3><p><code>间隙锁(gap lock)</code>是锁定<code>索引</code>记录之间的间隙。例如：<code>select c1 from t where c1 between 10 and 20 for update;</code>，防止其他事务将10-20之间的值插入到记录中，无论改值是否存在，因为该范围间隙都已经被锁定。</p>
+<p>间隙锁可能跨越单个索引值、多个索引值甚至可能为空。</p>
+<p>间隙锁是权衡性能和并发的一部分，用于某些事务隔离级别而不是其他级别。</p>
+<p>唯一索引锁定不需要使用间隙锁（但是这不包括多列唯一索引的情况有可能会使用到间隙锁）。</p>
+<h3 id="范围锁-next-key-lock"><a href="#范围锁-next-key-lock" class="headerlink" title="范围锁(next-key lock)"></a>范围锁(next-key lock)</h3><h3 id="插入意向锁-insert-intention-lock"><a href="#插入意向锁-insert-intention-lock" class="headerlink" title="插入意向锁(insert intention lock)"></a>插入意向锁(insert intention lock)</h3><h3 id="AOTU-INC锁-AOTU-INC-lock"><a href="#AOTU-INC锁-AOTU-INC-lock" class="headerlink" title="AOTU-INC锁(AOTU-INC lock)"></a>AOTU-INC锁(AOTU-INC lock)</h3>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/07/06/Mysql-InnoDB锁/" data-id="cjzxuk06y000w1lpcty9e2axr"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/InnoDB/">InnoDB</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MySQL/">MySQL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lock/">lock</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/09/09/Golang循环队列实现/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Golang循环队列实现
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/06/05/Linux进程分析/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Linux进程分析</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Linux标准输入输出错误以及重定向详解 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Linux标准输入输出错误以及重定向详解" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux标准输入输出错误以及重定向详解
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/10/15/Linux标准输入输出错误以及重定向详解/" class="article-date">
+  <time datetime="2018-10-15T22:35:58.000Z" itemprop="datePublished">2018-10-15</time>
+</a>
+        
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>这两天在用<code>Swoole</code>写一个简单的聊天室的时候，需要从标准输入读取数据，并且输出到屏幕，在用的时候对这些概念有些模糊，因此特地去查找了一下资料。</p>
+<a id="more"></a>
+<h2 id="什么是标准输入-stdin-、标准输出-stdout-、标准错误-stderr-？"><a href="#什么是标准输入-stdin-、标准输出-stdout-、标准错误-stderr-？" class="headerlink" title="什么是标准输入(stdin)、标准输出(stdout)、标准错误(stderr)？"></a>什么是标准输入(stdin)、标准输出(stdout)、标准错误(stderr)？</h2><p>Linux中，在创建进程时，会默认创建三个文件描述法，fd为0、1、2，分别对应标准输入、标准输出、标准错误。</p>
+<p>在Linux中一切皆文件，每当我们打开一个文件，就创建一个文件描述符，fd就会+1.</p>
+<ol>
+<li>标准输入就是从键盘读取、程序让用户输入的信息；</li>
+<li>标准输出指的是在命令行下，终端打印出来的信息，和反馈；</li>
+<li>标准错误与标准输出相差不多，只不过错误是程序出错时反馈的内容；</li>
+</ol>
+<p>标准输入没什么好说的，就是读取用户从终端输入的信息。但标准输出和标准错误之间在终端上是很难看出有什么区别。</p>
+<h2 id="标出输出和标准错误区别"><a href="#标出输出和标准错误区别" class="headerlink" title="标出输出和标准错误区别"></a>标出输出和标准错误区别</h2><p><code>stderr</code>是没有缓冲的，会立即输出；</p>
+<p><code>stdout</code>默认是行缓冲，也就是遇到<code>\n</code>才会向外输出内容。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stdout</span>, <span class="string">"%s"</span>, <span class="string">"Hello "</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"%s"</span>, <span class="string">"World!"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 10:47:39 › gcc -c test.c</span></span><br><span class="line"><span class="comment">// 10:47:46 › gcc test.o -o test</span></span><br><span class="line"><span class="comment">// 10:47:54 › ./test</span></span><br><span class="line"><span class="comment">// World!Hello %            结果</span></span><br></pre></td></tr></table></figure>
+
+<p>要想<code>stdout</code>实时输出，可以加上<code>\n</code>或者是在输出语句后加上<code>fflush(stdout);</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"%s\n"</span>, <span class="string">"Hello "</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"%s\n"</span>, <span class="string">"World!"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 10:48:39 › gcc -c test.c</span></span><br><span class="line"><span class="comment">// 10:48:46 › gcc test.o -o test</span></span><br><span class="line"><span class="comment">// 10:48:54 › ./test</span></span><br><span class="line"><span class="comment">// Hello                结果</span></span><br><span class="line"><span class="comment">// World!</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> <span class="keyword">const</span> *argv[])</span> </span>&#123;</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"%s"</span>, <span class="string">"Hello "</span>);</span><br><span class="line">    fflush(<span class="built_in">stdout</span>);</span><br><span class="line">    <span class="built_in">fprintf</span>(<span class="built_in">stderr</span>, <span class="string">"%s"</span>, <span class="string">"World!"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 10:53:34 › gcc -c test.c</span></span><br><span class="line"><span class="comment">// 10:53:40 › gcc test.o -o test</span></span><br><span class="line"><span class="comment">// 10:53:47 › ./test</span></span><br><span class="line"><span class="comment">// Hello World!%</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="重定向"><a href="#重定向" class="headerlink" title="重定向"></a>重定向</h2><p>重定向就是把输出存储或者输出到另外一个地方。</p>
+<p>下面是一些常用的重定向方式：</p>
+<h3 id="输入重定向"><a href="#输入重定向" class="headerlink" title="输入重定向"></a>输入重定向</h3><p>在没有使用重定向时，终端的输出如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[lvyun@lvyun-cn ~]$ find  /etc/ -name passwd                  // stdin 0</span><br><span class="line">find: '/etc/dhcp': Permission denied                          // stderr 2</span><br><span class="line">/etc/passwd                                                   // stdout 1</span><br><span class="line">find: '/etc/ntp/crypto': Permission denied</span><br><span class="line">find: '/etc/sudoers.d': Permission denied</span><br><span class="line">find: '/etc/selinux/final': Permission denied</span><br><span class="line">find: '/etc/selinux/targeted/active': Permission denied</span><br><span class="line">/etc/pam.d/passwd</span><br><span class="line">find: '/etc/audisp': Permission denied</span><br></pre></td></tr></table></figure>
+
+<p>会把所有的反馈都打印到屏幕上（标准输出和标准错误）</p>
+<ol>
+<li><p>command &gt;filename</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 将stdout重定向到文件filename，如果文件不存在则创建，存在则覆盖。</span><br><span class="line"></span><br><span class="line">[lvyun@lvyun-cn ~]$ find /etc/ -name passwd &gt;find.out</span><br><span class="line">find: '/etc/dhcp': Permission denied</span><br><span class="line">find: '/etc/ntp/crypto': Permission denied</span><br><span class="line">find: '/etc/sudoers.d': Permission denied</span><br><span class="line">find: '/etc/selinux/final': Permission denied</span><br><span class="line">find: '/etc/selinux/targeted/active': Permission denied</span><br><span class="line">find: '/etc/audisp': Permission denied</span><br><span class="line"></span><br><span class="line">[lvyun@lvyun-cn ~]$ cat find.out</span><br><span class="line">/etc/passwd</span><br><span class="line">/etc/pam.d/passwd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>command 1&gt;filename</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">// 效果同上， &gt; 默认输入为1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>command 2&gt;filename</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// 将stderr重定向到filename，如果文件不存在则创建，存在则覆盖。</span><br><span class="line">[lvyun@lvyun-cn ~]$ find  /etc/ -name passwd 2&gt;find.out.2</span><br><span class="line">/etc/passwd</span><br><span class="line">/etc/pam.d/passwd</span><br><span class="line"></span><br><span class="line">[lvyun@lvyun-cn ~]$ cat find.out.2</span><br><span class="line">find: '/etc/dhcp': Permission denied</span><br><span class="line">find: '/etc/ntp/crypto': Permission denied</span><br><span class="line">find: '/etc/sudoers.d': Permission denied</span><br><span class="line">find: '/etc/selinux/final': Permission denied</span><br><span class="line">find: '/etc/selinux/targeted/active': Permission denied</span><br><span class="line">find: '/etc/audisp': Permission denied</span><br><span class="line">find: '/etc/polkit-1/rules.d': Permission denied</span><br><span class="line">find: '/etc/polkit-1/localauthority': Permission denied</span><br><span class="line">find: '/etc/pki/rsyslog': Permission denied</span><br><span class="line">find: '/etc/pki/CA/private': Permission denied</span><br><span class="line">find: '/etc/docker': Permission denied</span><br><span class="line">find: '/etc/grub.d': Permission denied</span><br><span class="line">find: '/etc/audit': Permission denied</span><br><span class="line">find: '/etc/lvm/backup': Permission denied</span><br><span class="line">find: '/etc/lvm/archive': Permission denied</span><br><span class="line">find: '/etc/lvm/cache': Permission denied</span><br><span class="line">find: '/etc/firewalld': Permission denied</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>command &amp;&gt;filename</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// 将stdout、stderr重定向到文件filename，如果文件不存在则创建，存在则覆盖。</span><br><span class="line">[lvyun@lvyun-cn ~]$ find  /etc/ -name passwd  &amp;&gt;find.out</span><br><span class="line"></span><br><span class="line">[lvyun@lvyun-cn ~]$ cat find.out</span><br><span class="line">find: '/etc/dhcp': Permission denied</span><br><span class="line">/etc/passwd</span><br><span class="line">find: '/etc/ntp/crypto': Permission denied</span><br><span class="line">find: '/etc/sudoers.d': Permission denied</span><br><span class="line">find: '/etc/selinux/final': Permission denied</span><br><span class="line">find: '/etc/selinux/targeted/active': Permission denied</span><br><span class="line">/etc/pam.d/passwd</span><br><span class="line">find: '/etc/audisp': Permission denied</span><br><span class="line">find: '/etc/polkit-1/rules.d': Permission denied</span><br><span class="line">find: '/etc/polkit-1/localauthority': Permission denied</span><br><span class="line">find: '/etc/pki/rsyslog': Permission denied</span><br><span class="line">find: '/etc/pki/CA/private': Permission denied</span><br><span class="line">find: '/etc/docker': Permission denied</span><br><span class="line">find: '/etc/grub.d': Permission denied</span><br><span class="line">find: '/etc/audit': Permission denied</span><br><span class="line">find: '/etc/lvm/backup': Permission denied</span><br><span class="line">find: '/etc/lvm/archive': Permission denied</span><br><span class="line">find: '/etc/lvm/cache': Permission denied</span><br><span class="line">find: '/etc/firewalld': Permission denied</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>command M&gt;N</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// 将M(stdout、stderr)输出到文件N，如果重定向的右边没有 &amp; 符号，则表示文件</span><br><span class="line">[lvyun@lvyun-cn ~]$ find  /etc/ -name passwd  2&gt;1</span><br><span class="line">/etc/passwd</span><br><span class="line">/etc/pam.d/passwd</span><br><span class="line"></span><br><span class="line">[lvyun@lvyun-cn ~]$ cat 1</span><br><span class="line">find: '/etc/dhcp': Permission denied</span><br><span class="line">find: '/etc/ntp/crypto': Permission denied</span><br><span class="line">find: '/etc/sudoers.d': Permission denied</span><br><span class="line">find: '/etc/selinux/final': Permission denied</span><br><span class="line">find: '/etc/selinux/targeted/active': Permission denied</span><br><span class="line">find: '/etc/audisp': Permission denied</span><br><span class="line">find: '/etc/polkit-1/rules.d': Permission denied</span><br><span class="line">find: '/etc/polkit-1/localauthority': Permission denied</span><br><span class="line">find: '/etc/pki/rsyslog': Permission denied</span><br><span class="line">find: '/etc/pki/CA/private': Permission denied</span><br><span class="line">find: '/etc/docker': Permission denied</span><br><span class="line">find: '/etc/grub.d': Permission denied</span><br><span class="line">find: '/etc/audit': Permission denied</span><br><span class="line">find: '/etc/lvm/backup': Permission denied</span><br><span class="line">find: '/etc/lvm/archive': Permission denied</span><br><span class="line">find: '/etc/lvm/cache': Permission denied</span><br><span class="line">find: '/etc/firewalld': Permission denied</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>command M&gt;&amp;N</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// 将M重定向绑定到N，例如 2&gt;&amp;1，将stderr重定向绑定到stdout</span><br><span class="line">[lvyun@lvyun-cn ~]$ find  /etc/ -name passwd  2&gt;&amp;1</span><br><span class="line">find: '/etc/dhcp': Permission denied</span><br><span class="line">/etc/passwd</span><br><span class="line">find: '/etc/ntp/crypto': Permission denied</span><br><span class="line">find: '/etc/sudoers.d': Permission denied</span><br><span class="line">find: '/etc/selinux/final': Permission denied</span><br><span class="line">find: '/etc/selinux/targeted/active': Permission denied</span><br><span class="line">/etc/pam.d/passwd</span><br><span class="line">find: '/etc/audisp': Permission denied</span><br><span class="line">find: '/etc/polkit-1/rules.d': Permission denied</span><br><span class="line">find: '/etc/polkit-1/localauthority': Permission denied</span><br><span class="line">find: '/etc/pki/rsyslog': Permission denied</span><br><span class="line">find: '/etc/pki/CA/private': Permission denied</span><br><span class="line">find: '/etc/docker': Permission denied</span><br><span class="line">find: '/etc/grub.d': Permission denied</span><br><span class="line">find: '/etc/audit': Permission denied</span><br><span class="line">find: '/etc/lvm/backup': Permission denied</span><br><span class="line">find: '/etc/lvm/archive': Permission denied</span><br><span class="line">find: '/etc/lvm/cache': Permission denied</span><br><span class="line">find: '/etc/firewalld': Permission denied</span><br><span class="line"></span><br><span class="line">// 这里看着是和没有使用重定向的时候屏幕显示的是一样的，但是其实是有很大的差别的。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>附上<code>stackoverflow</code>上<code>Byte Commander</code>的一个<a href="https://askubuntu.com/questions/420981/how-do-i-save-terminal-output-to-a-file" target="_blank" rel="noopener">回答</a></p>
+</li>
+</ol>
+<p><img src="https://i.loli.net/2018/10/18/5bc7e697c132e.png" alt="image"></p>
+<h3 id="高级用法"><a href="#高级用法" class="headerlink" title="高级用法"></a>高级用法</h3><ol>
+<li><p>command &gt;filename 2&gt;&amp;1</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// 将 stdout 重定向到文件 filename 中，stderr 被重定向到当前stdout 的位置</span><br><span class="line">[lvyun@lvyun-cn ~]$ find  /etc/ -name passwd &gt;find.out  2&gt;&amp;1</span><br><span class="line"></span><br><span class="line">[lvyun@lvyun-cn ~]$ cat find.out</span><br><span class="line">find: '/etc/dhcp': Permission denied</span><br><span class="line">/etc/passwd</span><br><span class="line">find: '/etc/ntp/crypto': Permission denied</span><br><span class="line">find: '/etc/sudoers.d': Permission denied</span><br><span class="line">find: '/etc/selinux/final': Permission denied</span><br><span class="line">find: '/etc/selinux/targeted/active': Permission denied</span><br><span class="line">/etc/pam.d/passwd</span><br><span class="line">find: '/etc/audisp': Permission denied</span><br><span class="line">find: '/etc/polkit-1/rules.d': Permission denied</span><br><span class="line">find: '/etc/polkit-1/localauthority': Permission denied</span><br><span class="line">find: '/etc/pki/rsyslog': Permission denied</span><br><span class="line">find: '/etc/pki/CA/private': Permission denied</span><br><span class="line">find: '/etc/docker': Permission denied</span><br><span class="line">find: '/etc/grub.d': Permission denied</span><br><span class="line">find: '/etc/audit': Permission denied</span><br><span class="line">find: '/etc/lvm/backup': Permission denied</span><br><span class="line">find: '/etc/lvm/archive': Permission denied</span><br><span class="line">find: '/etc/lvm/cache': Permission denied</span><br><span class="line">find: '/etc/firewalld': Permission denied</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>command 2&gt;&amp;1 &gt;filename</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">// 将 stderr 重定向到当前 stdout 的位置，然后将 stdout 重定向到文件filename</span><br><span class="line">[lvyun@lvyun-cn ~]$ find  /etc/ -name passwd 2&gt;&amp;1 &gt;find.out</span><br><span class="line">find: '/etc/dhcp': Permission denied</span><br><span class="line">find: '/etc/ntp/crypto': Permission denied</span><br><span class="line">find: '/etc/sudoers.d': Permission denied</span><br><span class="line">find: '/etc/selinux/final': Permission denied</span><br><span class="line">find: '/etc/selinux/targeted/active': Permission denied</span><br><span class="line">find: '/etc/audisp': Permission denied</span><br><span class="line">find: '/etc/polkit-1/rules.d': Permission denied</span><br><span class="line">find: '/etc/polkit-1/localauthority': Permission denied</span><br><span class="line">find: '/etc/pki/rsyslog': Permission denied</span><br><span class="line">find: '/etc/pki/CA/private': Permission denied</span><br><span class="line">find: '/etc/docker': Permission denied</span><br><span class="line">find: '/etc/grub.d': Permission denied</span><br><span class="line">find: '/etc/audit': Permission denied</span><br><span class="line">find: '/etc/lvm/backup': Permission denied</span><br><span class="line">find: '/etc/lvm/archive': Permission denied</span><br><span class="line">find: '/etc/lvm/cache': Permission denied</span><br><span class="line">find: '/etc/firewalld': Permission denied</span><br><span class="line"></span><br><span class="line">[lvyun@lvyun-cn ~]$ cat find.out</span><br><span class="line">/etc/passwd</span><br><span class="line">/etc/pam.d/passwd</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>两者的区别</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 我们可以通过下面的表达式来理解两者区别</span><br><span class="line"></span><br><span class="line">// 前提：</span><br><span class="line">stdin = 0</span><br><span class="line">stdout = 1</span><br><span class="line">stderr = 2</span><br><span class="line">filename = 3</span><br><span class="line"></span><br><span class="line">// &gt;filename 2&gt;&amp;1</span><br><span class="line">stdout = filename  // stdout = 3</span><br><span class="line">stderr = stdout    // stderr = 3</span><br><span class="line"></span><br><span class="line">// 2&gt;&amp;1 &gt;filename</span><br><span class="line">stderr = stdout    // stderr = 1</span><br><span class="line">stdout = filename  // stdout = 3</span><br><span class="line"></span><br><span class="line">这就是他们之间的区别，也就是为什么 &gt;filename 2&gt;&amp;1 会把标准输出、标准错误全部重定向文件filename中。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>command &gt;/dev/null<br>/dev/null代表linux的空设备文件，所有往这个文件里面写入的内容都会丢失，俗称“黑洞”。那么执行了&gt;/dev/null之后，标准输出就会不再存在，没有任何地方能够找到输出的内容。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[lvyun@lvyun-cn ~]$ find  /etc/ -name passwd &gt;/dev/null</span><br><span class="line">find: '/etc/dhcp': Permission denied</span><br><span class="line">find: '/etc/ntp/crypto': Permission denied</span><br><span class="line">find: '/etc/sudoers.d': Permission denied</span><br><span class="line">find: '/etc/selinux/final': Permission denied</span><br><span class="line">find: '/etc/selinux/targeted/active': Permission denied</span><br><span class="line">find: '/etc/audisp': Permission denied</span><br><span class="line">find: '/etc/polkit-1/rules.d': Permission denied</span><br><span class="line">find: '/etc/polkit-1/localauthority': Permission denied</span><br><span class="line">find: '/etc/pki/rsyslog': Permission denied</span><br><span class="line">find: '/etc/pki/CA/private': Permission denied</span><br><span class="line">find: '/etc/docker': Permission denied</span><br><span class="line">find: '/etc/grub.d': Permission denied</span><br><span class="line">find: '/etc/audit': Permission denied</span><br><span class="line">find: '/etc/lvm/backup': Permission denied</span><br><span class="line">find: '/etc/lvm/archive': Permission denied</span><br><span class="line">find: '/etc/lvm/cache': Permission denied</span><br><span class="line">find: '/etc/firewalld': Permission denied</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>nohup结合<br>我们经常会用<code>nohup command &amp;</code>的组合方式来启动一个后台任务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup php filename.php &amp;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>为了不让执行过程中输出的日志或者错误打印到前台（屏幕），我们就需要用到重定向绑定。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nohup php filename.php &gt;filename.out 2&gt;&amp;1 &amp;</span><br><span class="line"></span><br><span class="line">// 或者是</span><br><span class="line">nohup php filename.php &gt;/dev/null 2&gt;&amp;1 &amp;</span><br></pre></td></tr></table></figure>
+
+<h2 id="command-gt-filename-2-gt-amp-1-与-command-gt-filename-2-gt-filename"><a href="#command-gt-filename-2-gt-amp-1-与-command-gt-filename-2-gt-filename" class="headerlink" title="command &gt;filename 2&gt;&amp;1 与 command &gt;filename 2&gt;filename"></a>command &gt;filename 2&gt;&amp;1 与 command &gt;filename 2&gt;filename</h2><p>为什么要用重定向绑定，而不用<code>command &gt;filename 2&gt;filename</code>这种方式呢？我们想先看下这两者的输出结果区别。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">// command &gt;filename 2&gt;&amp;1</span><br><span class="line">[lvyun@lvyun-cn ~]$ find  /etc/ -name passwd &gt;find.out 2&gt;&amp;1</span><br><span class="line">[lvyun@lvyun-cn ~]$ cat find.out</span><br><span class="line">find: ‘/etc/dhcp’: Permission denied</span><br><span class="line">/etc/passwd</span><br><span class="line">find: ‘/etc/ntp/crypto’: Permission denied</span><br><span class="line">find: ‘/etc/sudoers.d’: Permission denied</span><br><span class="line">find: ‘/etc/selinux/final’: Permission denied</span><br><span class="line">find: ‘/etc/selinux/targeted/active’: Permission denied</span><br><span class="line">/etc/pam.d/passwd</span><br><span class="line">find: ‘/etc/audisp’: Permission denied</span><br><span class="line">find: ‘/etc/polkit-1/rules.d’: Permission denied</span><br><span class="line">find: ‘/etc/polkit-1/localauthority’: Permission denied</span><br><span class="line">find: ‘/etc/pki/rsyslog’: Permission denied</span><br><span class="line">find: ‘/etc/pki/CA/private’: Permission denied</span><br><span class="line">find: ‘/etc/docker’: Permission denied</span><br><span class="line">find: ‘/etc/grub.d’: Permission denied</span><br><span class="line">find: ‘/etc/audit’: Permission denied</span><br><span class="line">find: ‘/etc/lvm/backup’: Permission denied</span><br><span class="line">find: ‘/etc/lvm/archive’: Permission denied</span><br><span class="line">find: ‘/etc/lvm/cache’: Permission denied</span><br><span class="line">find: ‘/etc/firewalld’: Permission denied</span><br><span class="line"></span><br><span class="line">// command &gt;filename 2&gt;filename</span><br><span class="line">[lvyun@lvyun-cn ~]$ find  /etc/ -name passwd 2&gt;find.out 1&gt;find.out</span><br><span class="line">[lvyun@lvyun-cn ~]$ cat find.out</span><br><span class="line">/etc/passwd</span><br><span class="line">/etc/pam.d/passwd</span><br><span class="line">ion denied                                                              // 这段错误被截断</span><br><span class="line">find: '/etc/ntp/crypto': Permission denied</span><br><span class="line">find: '/etc/sudoers.d': Permission denied</span><br><span class="line">find: '/etc/selinux/final': Permission denied</span><br><span class="line">find: '/etc/selinux/targeted/active': Permission denied</span><br><span class="line">find: '/etc/audisp': Permission denied</span><br><span class="line">find: '/etc/polkit-1/rules.d': Permission denied</span><br><span class="line">find: '/etc/polkit-1/localauthority': Permission denied</span><br><span class="line">find: '/etc/pki/rsyslog': Permission denied</span><br><span class="line">find: '/etc/pki/CA/private': Permission denied</span><br><span class="line">find: '/etc/docker': Permission denied</span><br><span class="line">find: '/etc/grub.d': Permission denied</span><br><span class="line">find: '/etc/audit': Permission denied</span><br><span class="line">find: '/etc/lvm/backup': Permission denied</span><br><span class="line">find: '/etc/lvm/archive': Permission denied</span><br><span class="line">find: '/etc/lvm/cache': Permission denied</span><br><span class="line">find: '/etc/firewalld': Permission denied</span><br></pre></td></tr></table></figure>
+
+<p>因为<code>command &gt;filename 2&gt;filename</code>标准输出和标准错误会同时抢占filename的管道，所以导致在输出内容的时候会出现缺失、覆盖或者是乱码等现象。因此这种写法最后的结果是无法预估的。</p>
+<p><code>command &gt;filename 2&gt;filename</code>不像<code>command &gt;filename 2&gt;&amp;1</code>共用filename文件的管道，文件会被打开两次，这也就是为什么会出现抢占文件管道的问题了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/10/15/Linux标准输入输出错误以及重定向详解/" data-id="cjzxuk06o000r1lpceofqiizo"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/10/16/使用Swoole搭建TCP聊天室/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            使用Swoole搭建TCP聊天室
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/10/09/Composer语义化版本/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Composer语义化版本</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

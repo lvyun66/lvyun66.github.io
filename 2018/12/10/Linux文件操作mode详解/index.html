@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    fopen中mode详解 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Linux文件操作mode详解" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      fopen中mode详解
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/12/10/Linux文件操作mode详解/" class="article-date">
+  <time datetime="2018-12-10T16:49:14.000Z" itemprop="datePublished">2018-12-10</time>
+</a>
+        
+      </div>
+    
+
+    
+      
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>文件操作是一个很平常的一个操作，打开文件、写入文件已经关闭文件等操作。不同模式打开文件会有不同的效果。有一些<code>mode</code>会比较容易混淆，在此记录下它们之间的区别。</p>
+<a id="more"></a>
+<p><code>mode</code>模式：</p>
+<ol>
+<li><code>r</code>：以只读模式打开文件，将文件指针指向文件头；</li>
+<li><code>r+</code>：以读写模式打开文件，将文件指针指向开头；</li>
+<li><code>w</code>：以只读模式打开文件，将文件指针指向文件头并将文件大小截为0，如果文件不存在则尝试创建；</li>
+<li><code>w+</code>：以读写模式打开文件，将文件指正指向文件头并将文件大小截为0，如果文件不存在则尝试创建；</li>
+<li><code>a</code>：以写入模式打开文件，将文件指针指向文件结尾，如果文件不存在则尝试创建；</li>
+<li><code>a+</code>：以读写模式打开文件，将文件指针指向文件结尾，如果文件不存在则尝试创建；</li>
+<li><code>x</code>：创建并以写入模式打开文件，将文件指正指向文件开头，如果文件已存在，则<code>fopen</code>调用失败，返回<code>false</code>，如果不存在则尝试创建；</li>
+<li><code>x+</code>：创建并读写模式打开文件，将文件指针指向文件开头，如果文件已存在，则<code>fopen</code>调用失败，返回<code>false</code>，如果不存在则尝试创建；</li>
+</ol>
+<p>其中我们最容易混淆的两个模式就是<code>r+</code>和<code>w+</code>，这两个模式都是以读写方式打开文件，但之间有何区别呢？</p>
+<p><code>r+</code>不会将文件清空，将文件指针指向文件开头，如果文件不为空，内容会被新写入的覆盖。</p>
+<p>假设文件<code>test.txt</code>内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">This is testing for fprintf 5...</span><br><span class="line">This is testing for fputs 6</span><br><span class="line">This is testing for fprintf 7...</span><br><span class="line">This is testing for fputs 8</span><br></pre></td></tr></table></figure>
+
+<p>php代码：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">$filename = <span class="string">'test.txt'</span>;</span><br><span class="line">$fp = fopen($filename, <span class="string">'r+'</span>);</span><br><span class="line">fprintf($fp, <span class="string">"This is testing for fprintf 7...\n"</span>);</span><br><span class="line">fputs($fp, <span class="string">"This is testing for fputs 8\n"</span>);</span><br><span class="line">fclose($fp);</span><br></pre></td></tr></table></figure>
+
+<p>最终结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">This is testing for fprintf 7...</span><br><span class="line">This is testing for fputs 8</span><br><span class="line">This is testing for fprintf 7...</span><br><span class="line">This is testing for fputs 8</span><br></pre></td></tr></table></figure>
+
+<p><code>w+</code>会清空文件内容，将文件指正指向文件开头，类似与先将文件删除，再新建文件，最后把新内容写入文件中；如果要打开的文件不存在则会创建。</p>
+<p>That`s all！Thx.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/12/10/Linux文件操作mode详解/" data-id="cjzxuk06m000p1lpc1wtahda7"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/fopen/">fopen</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2019/02/14/Redis集群教程/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Redis集群教程
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/12/08/Yii2源码分析(8)-运行流程/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Yii2源码分析(8)-运行流程</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

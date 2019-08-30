@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="jumbotron">
+  <div class="video">
+    
+      <div class="video-frame">
+        <img src="/images/ocean/overlay-hero.png" alt="Decorative image frame">
+      </div>
+    
+    <div class="video-media">
+      <video playsinline="" autoplay="" loop="" muted="" data-autoplay=""
+             poster="/images/ocean/ocean.png" x5-video-player-type="h5">
+        <source src="/images/ocean/ocean.mp4" type="video/mp4">
+        <source src="/images/ocean/ocean.ogv" type="video/ogg">
+        <source src="/images/ocean/ocean.webm" type="video/webm">
+        <p>Your user agent does not support the HTML5 Video element.</p>
+      </video>
+      <div class="video-overlay"></div>
+    </div>
+    <div class="video-inner text-center text-white">
+      <h1><a href="/">LvYun`s Blog</a></h1>
+      <p>Web开发 ｜ PHP</p>
+      <div><img src="/images/shark-inverted.svg" class="brand" alt="LvYun`s Blog"></div>
+    </div>
+    <div class="video-learn-more">
+      <a class="anchor" href="#landingpage"><i class="fe fe-mouse"></i></a>
+    </div>
+  </div>
+</section>
+
+<div id="landingpage">
+  <section class="outer">
+  <article class="articles">
+    
+    <h1 class="page-type-title"></h1>
+
+    
+      
+        
+
+<article id="post-PHP-require-include区别" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/08/29/PHP-require-include区别/">PHP中require和include区别？</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/29/PHP-require-include区别/" class="article-date">
+  <time datetime="2019-08-29T09:29:00.000Z" itemprop="datePublished">2019-08-29</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>在Web项目中，include和require是模块化设计的基础，当然现在我们我们都是直接使用Composer来管理模块之间的相互依赖，但spl_autoload_register底层的设计中依然用到include和require。</p>
+<p>被包含文件先按照参数的给出的路径寻找，如果没有给出目录（只有文件名）时按照include_path指定的目录寻找。如果在include_path下没有找到文件则include最后才在调用脚本文件所在的目录和当前工作目录下寻找。</p>
+        
+          <a class="article-more-link" href="/2019/08/29/PHP-require-include区别/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/08/29/PHP-require-include区别/" data-id="cjzxuk07200111lpcsdsiqi9v"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-PHP中的加号" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/08/22/PHP中的加号/">PHP算术运算符的加号应该如何使用？</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/22/PHP中的加号/" class="article-date">
+  <time datetime="2019-08-22T17:42:49.000Z" itemprop="datePublished">2019-08-22</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>加号是PHP的一个关键词，常用语算术运算中，例如1+2、2.0+3.0等等。但在PHP中加号（+）不仅仅可以在数字之间相加，还可以在别的类型之间进行运算。加号运算符（+）都是在哪些类型之间运算呢？下面让我们一一列举。</p>
+        
+          <a class="article-more-link" href="/2019/08/22/PHP中的加号/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/08/22/PHP中的加号/" data-id="cjzxuk07400131lpcn7ce75ms"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-PHP-echo-print-print_r区别" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/08/21/PHP-echo-print-print_r区别/">PHP从本质上分析echo、print、print_r三者之间的区别？</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/21/PHP-echo-print-print_r区别/" class="article-date">
+  <time datetime="2019-08-21T09:38:25.000Z" itemprop="datePublished">2019-08-21</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p><code>echo</code>、<code>print</code>、<code>print_r</code>在PHP开发中都是常见的，但每次只管用，不理解它们之前的区别，包括在很多的面试中都会提及三者之间的区别。我们都知道它们都可以输出并打印字符串，但本质上它们有什么区别呢？</p>
+        
+          <a class="article-more-link" href="/2019/08/21/PHP-echo-print-print_r区别/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/08/21/PHP-echo-print-print_r区别/" data-id="cjzxuk07100101lpcn0bs6b9l"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码分析/">源码分析</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-PHP如何获取客户端真实IP" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/08/20/PHP如何获取客户端真实IP/">PHP如何获取客户端真实IP?</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/20/PHP如何获取客户端真实IP/" class="article-date">
+  <time datetime="2019-08-20T19:34:08.000Z" itemprop="datePublished">2019-08-20</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>PHP获取客户端IP的操作很常见，记录用户登录IP、根据IP判断用户位置、IP白名单都是一些基本的业务需求。因此如何获取准确的IP地址也是这些需求的必要前提。</p>
+<p>要想准确获取IP地址，我们先了解HTTP header中和IP相关的信息以及代理服务器和应用服务器是如何传递IP地址的。</p>
+        
+          <a class="article-more-link" href="/2019/08/20/PHP如何获取客户端真实IP/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/08/20/PHP如何获取客户端真实IP/" data-id="cjzxuk07800181lpcl3244yu4"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-PHP源码之strrev函数分析" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/04/09/PHP源码之strrev函数分析/">PHP源码之strrev函数分析</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/04/09/PHP源码之strrev函数分析/" class="article-date">
+  <time datetime="2019-04-09T19:03:01.000Z" itemprop="datePublished">2019-04-09</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>PHP函数<code>strrev</code>的作用是反转字符串，传入一个带反转的字符串，并返回反转后的字符串。</p>
+        
+          <a class="article-more-link" href="/2019/04/09/PHP源码之strrev函数分析/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/04/09/PHP源码之strrev函数分析/" data-id="cjzxuk079001a1lpc4w22yxu2"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/源码/">源码</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-PHP之静态变量和成员变量有何区别" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/04/07/PHP之静态变量和成员变量有何区别/">PHP之静态变量和成员变量有何区别</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/04/07/PHP之静态变量和成员变量有何区别/" class="article-date">
+  <time datetime="2019-04-07T22:38:05.000Z" itemprop="datePublished">2019-04-07</time>
+</a>
+        
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>todo…</p>
+        
+          <a class="article-more-link" href="/2019/04/07/PHP之静态变量和成员变量有何区别/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/04/07/PHP之静态变量和成员变量有何区别/" data-id="cjzxuk07500141lpccezlc84v"
+         class="article-share-link">分享</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-PHP源码分析之如何表示弱类型" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/04/07/PHP源码分析之如何表示弱类型/">PHP源码分析之如何表示弱类型</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/04/07/PHP源码分析之如何表示弱类型/" class="article-date">
+  <time datetime="2019-04-07T22:35:13.000Z" itemprop="datePublished">2019-04-07</time>
+</a>
+        
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>todo…</p>
+        
+          <a class="article-more-link" href="/2019/04/07/PHP源码分析之如何表示弱类型/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/04/07/PHP源码分析之如何表示弱类型/" data-id="cjzxuk07a001b1lpc4lgci6wp"
+         class="article-share-link">分享</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-PHP函数intval和int区别" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/04/07/PHP函数intval和int区别/">PHP函数intval和int区别</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/04/07/PHP函数intval和int区别/" class="article-date">
+  <time datetime="2019-04-07T22:32:53.000Z" itemprop="datePublished">2019-04-07</time>
+</a>
+        
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>TODO…</p>
+        
+          <a class="article-more-link" href="/2019/04/07/PHP函数intval和int区别/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/04/07/PHP函数intval和int区别/" data-id="cjzxuk07600161lpcgbmvje88"
+         class="article-share-link">分享</a>
+      
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Miniube安装" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/03/22/Miniube安装/">费了九牛二虎之力安装miniube</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/03/22/Miniube安装/" class="article-date">
+  <time datetime="2019-03-22T17:57:01.000Z" itemprop="datePublished">2019-03-22</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/k8s/">k8s</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>由于不可抗拒的因素，导致在国内安装minikube变得十分的复杂和繁琐。</p>
+        
+          <a class="article-more-link" href="/2019/03/22/Miniube安装/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/03/22/Miniube安装/" data-id="cjzxuk06x000u1lpcjnqxq8c4"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/k8s/">k8s</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Golang可变参数函数传入切片会发生什么" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/03/21/Golang可变参数函数传入切片会发生什么/">Golang可变参数函数，传入切片会发生什么？</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/03/21/Golang可变参数函数传入切片会发生什么/" class="article-date">
+  <time datetime="2019-03-21T12:00:27.000Z" itemprop="datePublished">2019-03-21</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>可变参数函数又可以称为”变长函数“，因为函数参数长度可以变化。会用<code>name ...type</code>这种形式表示可变参数。</p>
+        
+          <a class="article-more-link" href="/2019/03/21/Golang可变参数函数传入切片会发生什么/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/03/21/Golang可变参数函数传入切片会发生什么/" data-id="cjzxuk06e000h1lpcg1mi9wfb"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/">Golang</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Golang那些不容忽视的细节" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/03/20/Golang那些不容忽视的细节/">Golang那些不容忽视的细节</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/03/20/Golang那些不容忽视的细节/" class="article-date">
+  <time datetime="2019-03-20T14:32:23.000Z" itemprop="datePublished">2019-03-20</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>go语言的语法简单，但使用起来确有很多细节，下面是日常开发中遇到的细节问题。</p>
+        
+          <a class="article-more-link" href="/2019/03/20/Golang那些不容忽视的细节/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/03/20/Golang那些不容忽视的细节/" data-id="cjzxuk06j000l1lpcw8zeqpd0"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/">Golang</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Redis集群教程" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2019/02/14/Redis集群教程/">Redis集群教程</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/02/14/Redis集群教程/" class="article-date">
+  <time datetime="2019-02-14T19:10:25.000Z" itemprop="datePublished">2019-02-14</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Redis/">Redis</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>本文主要是翻译redis官网的一篇文章，并且加上作者的一些理解而成。若理解错误，请提出批评。</p>
+<p>原文请查看 <strong><a href="https://redis.io/topics/cluster-tutorial#redis-cluster-101" target="_blank" rel="noopener">Redis cluster tutorial</a></strong></p>
+        
+          <a class="article-more-link" href="/2019/02/14/Redis集群教程/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/02/14/Redis集群教程/" data-id="cjzxuk07b001e1lpcrmgipwww"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Cluster/">Cluster</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/">Redis</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Linux文件操作mode详解" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2018/12/10/Linux文件操作mode详解/">fopen中mode详解</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/12/10/Linux文件操作mode详解/" class="article-date">
+  <time datetime="2018-12-10T16:49:14.000Z" itemprop="datePublished">2018-12-10</time>
+</a>
+        
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>文件操作是一个很平常的一个操作，打开文件、写入文件已经关闭文件等操作。不同模式打开文件会有不同的效果。有一些<code>mode</code>会比较容易混淆，在此记录下它们之间的区别。</p>
+        
+          <a class="article-more-link" href="/2018/12/10/Linux文件操作mode详解/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/12/10/Linux文件操作mode详解/" data-id="cjzxuk06m000p1lpc1wtahda7"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/fopen/">fopen</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Yii2源码分析(8)-运行流程" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2018/12/08/Yii2源码分析(8)-运行流程/">Yii2源码分析(8)-运行流程</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/12/08/Yii2源码分析(8)-运行流程/" class="article-date">
+  <time datetime="2018-12-08T20:12:01.000Z" itemprop="datePublished">2018-12-08</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Yii2/">Yii2</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>Yii2</p>
+        
+          <a class="article-more-link" href="/2018/12/08/Yii2源码分析(8)-运行流程/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/12/08/Yii2源码分析(8)-运行流程/" data-id="cjzxuk07i001n1lpcyom5q893"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yii2/">Yii2</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Yii2源码分析(7)-Application" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2018/12/07/Yii2源码分析(7)-Application/">Yii2源码分析(7)-Application</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/12/07/Yii2源码分析(7)-Application/" class="article-date">
+  <time datetime="2018-12-07T19:18:54.000Z" itemprop="datePublished">2018-12-07</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Yii2/">Yii2</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <a id="more"></a>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/12/07/Yii2源码分析(7)-Application/" data-id="cjzxuk07h001m1lpcxwz8y4ik"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yii2/">Yii2</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Yii2源码分析(6)-Module" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2018/12/06/Yii2源码分析(6)-Module/">Yii2源码分析(6)-Module</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/12/06/Yii2源码分析(6)-Module/" class="article-date">
+  <time datetime="2018-12-06T19:18:33.000Z" itemprop="datePublished">2018-12-06</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Yii2/">Yii2</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <a id="more"></a>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/12/06/Yii2源码分析(6)-Module/" data-id="cjzxuk07g001l1lpc77pz0b1q"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yii2/">Yii2</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Yii2源码分析(5)-ServiceLocator" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2018/12/05/Yii2源码分析(5)-ServiceLocator/">Yii2源码分析(5)-ServiceLocator</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/12/05/Yii2源码分析(5)-ServiceLocator/" class="article-date">
+  <time datetime="2018-12-05T19:18:45.000Z" itemprop="datePublished">2018-12-05</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Yii2/">Yii2</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <a id="more"></a>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/12/05/Yii2源码分析(5)-ServiceLocator/" data-id="cjzxuk07f001k1lpc2bhhbe7w"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yii2/">Yii2</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Yii2源码分析(4)-Component" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2018/12/04/Yii2源码分析(4)-Component/">Yii2源码分析(4)-Component</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/12/04/Yii2源码分析(4)-Component/" class="article-date">
+  <time datetime="2018-12-04T10:57:48.000Z" itemprop="datePublished">2018-12-04</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Yii2/">Yii2</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p><code>Component</code>是实现<code>behavior</code>、<code>event</code>和<code>property</code>特性的基类，提供<code>行为</code>和<code>事件</code>的能力；<code>Component</code>可包含多个<code>behavior</code>，<code>behavior</code>可以包含多个<code>event</code>。</p>
+        
+          <a class="article-more-link" href="/2018/12/04/Yii2源码分析(4)-Component/">阅读全文...</a>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/12/04/Yii2源码分析(4)-Component/" data-id="cjzxuk07f001j1lpc91hj4o4s"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yii2/">Yii2</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Yii2源码分析(3)-Behavior" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2018/12/03/Yii2源码分析(3)-Behavior/">Yii2源码分析(3)-Behavior</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/12/03/Yii2源码分析(3)-Behavior/" class="article-date">
+  <time datetime="2018-12-03T19:22:37.000Z" itemprop="datePublished">2018-12-03</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Yii2/">Yii2</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <a id="more"></a>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/12/03/Yii2源码分析(3)-Behavior/" data-id="cjzxuk07e001i1lpcg8808rvs"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yii2/">Yii2</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+        
+
+<article id="post-Yii2源码分析(2)-Event" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h2 itemprop="name">
+      <a class="article-title" href="/2018/12/02/Yii2源码分析(2)-Event/">Yii2源码分析(2)-Event</a>
+    </h2>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/12/02/Yii2源码分析(2)-Event/" class="article-date">
+  <time datetime="2018-12-02T19:22:04.000Z" itemprop="datePublished">2018-12-02</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Yii2/">Yii2</a>
+  </div>
+
+      </div>
+    
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <a id="more"></a>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/12/02/Yii2源码分析(2)-Event/" data-id="cjzxuk07d001h1lpcqndh5ryc"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yii2/">Yii2</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+
+  
+
+</article>
+
+
+
+      
+  </article>
+  
+
+  
+    <nav class="page-nav">
+      
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">Next page</a>
+    </nav>
+  
+</section>
+</div>
+
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+  <aside class="sidebar">
+    
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

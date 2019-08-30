@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Golang常量 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Golang常量" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Golang常量
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2017/11/15/Golang常量/" class="article-date">
+  <time datetime="2017-11-15T09:30:46.000Z" itemprop="datePublished">2017-11-15</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <h2 id="1-定义"><a href="#1-定义" class="headerlink" title="1. 定义"></a>1. 定义</h2><p><code>关键字</code> <code>常量名</code> = <code>常量值</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Pi <span class="keyword">float32</span> = <span class="number">3.14</span>    <span class="comment">// 显示类型定义</span></span><br><span class="line"><span class="keyword">const</span> Pi = <span class="number">3.14</span>            <span class="comment">// 隐式类型定义</span></span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+<p>如果隐式类型定义,编译器会自动根据值类型判断常量类型</p>
+<h2 id="2-iota"><a href="#2-iota" class="headerlink" title="2. iota"></a>2. iota</h2><p><code>iota</code>可以在常量定义中自增, 例如:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    Sunday = <span class="literal">iota</span>           <span class="comment">// 0</span></span><br><span class="line">    Monday                  <span class="comment">// 1</span></span><br><span class="line">    Tuesday                 <span class="comment">// 2</span></span><br><span class="line">    Wednesday               <span class="comment">// 3</span></span><br><span class="line">    Thursday                <span class="comment">// ...</span></span><br><span class="line">    Friday</span><br><span class="line">    Saturday</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>又例如:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    A, B = <span class="literal">iota</span> + <span class="number">1</span>, <span class="literal">iota</span> + <span class="number">2</span></span><br><span class="line">    C, D</span><br><span class="line">    E, F</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>最后的结果为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">A = 1</span><br><span class="line">B = 2</span><br><span class="line">C = 2</span><br><span class="line">D = 3</span><br><span class="line">E = 3</span><br><span class="line">F = 4</span><br></pre></td></tr></table></figure>
+
+<p>因为<code>iota</code>只会在下一行才会自增; 在本行定义中会始终保持不变</p>
+<p><code>iota</code>在没遇到一个常量快或者单个常量声明时, <code>iota</code>都会置为0; 也就是说<code>iota</code>在每次遇到关键字<code>const</code>时, 都会重置为<code>0</code>;</p>
+<h2 id="3-自定义类型"><a href="#3-自定义类型" class="headerlink" title="3. 自定义类型"></a>3. 自定义类型</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Color <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    RED Color = <span class="literal">iota</span> <span class="comment">// 0</span></span><br><span class="line">    ORANGE <span class="comment">// 1</span></span><br><span class="line">    YELLOW <span class="comment">// 2</span></span><br><span class="line">    GREEN <span class="comment">// ..</span></span><br><span class="line">    BLUE</span><br><span class="line">    INDIGO</span><br><span class="line">    VIOLET <span class="comment">// 6</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>如果函数参数为<code>Color</code>类型, 而传入参数类型为<code>int</code>, 则会在编译过程中报错;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># command-line-arguments</span><br><span class="line">.\main.go:45:11: cannot use color (type Color) as type int in argument to EchoColor</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-表达式"><a href="#4-表达式" class="headerlink" title="4. 表达式"></a>4. 表达式</h2><p>常量定义中可以包含表达式, 但是不能包含函数或者方法; 因为函数和方法在编译过程中是未知的; 例如在<a href="https://golang.org/doc/effective_go.html#constants" target="_blank" rel="noopener">Effective.go</a>文件中:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> ByteSize <span class="keyword">float64</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    _           = <span class="literal">iota</span>                   <span class="comment">// ignore first value by assigning to blank identifier</span></span><br><span class="line">    KB ByteSize = <span class="number">1</span> &lt;&lt; (<span class="number">10</span> * <span class="literal">iota</span>) <span class="comment">// 1 &lt;&lt; (10*1)</span></span><br><span class="line">    MB                                   <span class="comment">// 1 &lt;&lt; (10*2)</span></span><br><span class="line">    GB                                   <span class="comment">// 1 &lt;&lt; (10*3)</span></span><br><span class="line">    TB                                   <span class="comment">// 1 &lt;&lt; (10*4)</span></span><br><span class="line">    PB                                   <span class="comment">// 1 &lt;&lt; (10*5)</span></span><br><span class="line">    EB                                   <span class="comment">// 1 &lt;&lt; (10*6)</span></span><br><span class="line">    ZB                                   <span class="comment">// 1 &lt;&lt; (10*7)</span></span><br><span class="line">    YB                                   <span class="comment">// 1 &lt;&lt; (10*8)</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>如果我们想忽略某个常量, 可以使用<code>_</code>空白字符来代替;</p>
+<h2 id="附录"><a href="#附录" class="headerlink" title="附录"></a>附录</h2><p><code>&lt;&lt;</code>位运算符</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2017/11/15/Golang常量/" data-id="cjzxuk06g000i1lpcvr3k4nuu"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/">Golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/const/">const</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2017/11/29/Firewalld 防火墙/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Firdwalld防火墙
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2017/09/18/Mongodb基础/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">MongoDB基础</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

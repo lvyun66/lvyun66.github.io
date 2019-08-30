@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    PHP中require和include区别？ |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-PHP-require-include区别" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      PHP中require和include区别？
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2019/08/29/PHP-require-include区别/" class="article-date">
+  <time datetime="2019-08-29T09:29:00.000Z" itemprop="datePublished">2019-08-29</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PHP/">PHP</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p>在Web项目中，include和require是模块化设计的基础，当然现在我们我们都是直接使用Composer来管理模块之间的相互依赖，但spl_autoload_register底层的设计中依然用到include和require。</p>
+<p>被包含文件先按照参数的给出的路径寻找，如果没有给出目录（只有文件名）时按照include_path指定的目录寻找。如果在include_path下没有找到文件则include最后才在调用脚本文件所在的目录和当前工作目录下寻找。</p>
+<a id="more"></a>
+
+<p><strong>include和require没有本质上的区别，唯一的区别在于错误级别上，当文件无法被正常加载时include会抛出warming，而require会抛出error错误。</strong></p>
+<h2 id="include的基本用法及特点"><a href="#include的基本用法及特点" class="headerlink" title="include的基本用法及特点"></a>include的基本用法及特点</h2><ol>
+<li>被包含的文件将继承include所在行具有的全部变量范围，比如调用文件前面定义了一些变量，那么这些变量就能够在被包含的文件中使用，反之，被包含文件中定义的变量也将从include调用初开始被调用文件使用；</li>
+<li>被包含文件中定义的函数、类在include执行之后将可以被随处调用，即具有全局作用域；</li>
+<li>include是在运行时加载文件并执行，而不是在编译阶段。</li>
+</ol>
+<p><strong>include是一个特殊的语言结构，其参数不需要括号。</strong></p>
+<h2 id="require的基本用户及特点"><a href="#require的基本用户及特点" class="headerlink" title="require的基本用户及特点"></a>require的基本用户及特点</h2><p>用法基本与include一致，除了处理失败的处理方式不同之外。</p>
+<h2 id="include-once和require-once"><a href="#include-once和require-once" class="headerlink" title="include_once和require_once"></a>include_once和require_once</h2><p><code>include_once</code>语句和<code>include</code>语句完全相同，唯一区别是PHP会检查该文件是否已经被包含过，如果是则不会再次包含。</p>
+<p><code>require_once</code>和<code>require</code>也是同理。</p>
+<blockquote>
+<p>最后引用鸟哥的一篇文章 <a href="http://www.laruence.com/2012/09/12/2765.html" target="_blank" rel="noopener">再一次, 不要使用(include/require)_once</a>，我们应该尽量少使用(include/require)_once</p>
+</blockquote>
+<h2 id="引用文章"><a href="#引用文章" class="headerlink" title="引用文章"></a>引用文章</h2><blockquote>
+<p><a href="https://www.kancloud.cn/nickbai/php7/363301" target="_blank" rel="noopener">PHP7内核剖析</a><br><a href="http://www.laruence.com/2012/09/12/2765.html" target="_blank" rel="noopener">再一次, 不要使用(include/require)_once</a></p>
+</blockquote>
+<h2 id="Thinks"><a href="#Thinks" class="headerlink" title="Thinks"></a>Thinks</h2><p>感谢你的阅读。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2019/08/29/PHP-require-include区别/" data-id="cjzxuk07200111lpcsdsiqi9v"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+    
+      <a href="/2019/08/22/PHP中的加号/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">PHP算术运算符的加号应该如何使用？</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

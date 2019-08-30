@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Yii2源码分析(4)-Component |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Yii2源码分析(4)-Component" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Yii2源码分析(4)-Component
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/12/04/Yii2源码分析(4)-Component/" class="article-date">
+  <time datetime="2018-12-04T10:57:48.000Z" itemprop="datePublished">2018-12-04</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Yii2/">Yii2</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p><code>Component</code>是实现<code>behavior</code>、<code>event</code>和<code>property</code>特性的基类，提供<code>行为</code>和<code>事件</code>的能力；<code>Component</code>可包含多个<code>behavior</code>，<code>behavior</code>可以包含多个<code>event</code>。</p>
+<a id="more"></a>
+<p><code>Event</code>是一种将自定义代码<code>注入</code>到现有代码中的方法，当触发事件时，通过<code>call_user_func()</code>回调事件处理函数达到注入的效果；<code>Behavior</code>可用于增加现有组件功能而无需修改代码的方式。</p>
+<h2 id="组件-Component-的构成"><a href="#组件-Component-的构成" class="headerlink" title="组件(Component)的构成"></a>组件(Component)的构成</h2><h3 id="成员变量"><a href="#成员变量" class="headerlink" title="成员变量"></a>成员变量</h3><ol>
+<li><strong>$_events</strong> 存储组件绑定的事件</li>
+<li><strong>$_eventWildcards</strong> 存储时间通配符</li>
+<li><strong>$_behaviors</strong> 组件绑定的行为</li>
+</ol>
+<h3 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h3><ol>
+<li><p><strong>__get($name)</strong> 返回组件的属性值, 不仅实现<code>BaseObject</code>类中的基本功能, 也会获取<code>Behavior</code>中的属性, 达到把行为中的属性注入到组件中的效果</p>
+</li>
+<li><p><strong>__set($name, $value)</strong> 设置组件的属性. 会依次检查<code>组件中的setter</code>、<code>event</code>和<code>behavior中的setter</code></p>
+</li>
+<li><p><strong>__isset($name)</strong> 检验属性是否被设置</p>
+</li>
+<li><p><strong>__unset($name)</strong> 设置组件的属性为<code>null</code></p>
+</li>
+<li><p><strong>__call($name, $param)</strong> 调用不存在的方法时，检查行为中是否存在</p>
+</li>
+<li><p><strong>__clone()</strong> 克隆组件清除所有变量的值</p>
+</li>
+<li><p><strong>hasProperty()</strong> 是否包含属性，会依次检查<code>component的getter和setter</code>、<code>component的变量</code>以及<code>绑定在组件上的行为的属性</code></p>
+</li>
+<li><p><strong>canGetProperty()、canSetProperty()</strong> 检查属性是否有读写能力，检查范围同<code>hasProperty()</code></p>
+</li>
+<li><p><strong>hasMethod()</strong> 检查组件、行为中是否存在方法</p>
+</li>
+<li><p><strong>behaviors()</strong> 绑定在组件上的行为列表，数组结构表示如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">'behaviorName'</span> =&gt; [</span><br><span class="line">    <span class="string">'class'</span> =&gt; <span class="string">'BehaviorName'</span>,</span><br><span class="line">    <span class="string">'property1'</span> =&gt; <span class="string">'value1'</span>,</span><br><span class="line">    <span class="string">'property2'</span> =&gt; <span class="string">'value2'</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>hasEventHandlers()</strong> 组件是否包含事件处理函数</p>
+</li>
+<li><p><strong>on()</strong> 将事件绑定到组件</p>
+</li>
+<li><p><strong>off()</strong> 将事件与组件解绑</p>
+</li>
+<li><p><strong>trigger()</strong> 触发组件事件</p>
+</li>
+<li><p><strong>getBehavior()</strong> 获取行为对象</p>
+</li>
+<li><p><strong>getBehaviors()</strong> 获取组件所有行为</p>
+</li>
+<li><p><strong>attachBehavior()、attachBehaviors()</strong> 绑定行为到组件上</p>
+</li>
+<li><p><strong>detachBehavior()、detachBehaviors()</strong> 解绑组件上的行为</p>
+</li>
+<li><p><strong>ensureBehaviors()</strong> 确保<code>behaviors()</code>上的所有行为已经绑定到组件上</p>
+</li>
+<li><p><strong>attachBehaviorInternal()</strong> 绑定一个行为对象到组件的<code>$_behaviors</code>属性上</p>
+</li>
+</ol>
+<p>可以将<code>Component</code>的方法分为三类：</p>
+<ol>
+<li>属性类</li>
+<li>事件类</li>
+<li>行为类</li>
+</ol>
+<h2 id="如何实现property特性"><a href="#如何实现property特性" class="headerlink" title="如何实现property特性"></a>如何实现property特性</h2><p><code>Component</code>继承与<code>BaseObject</code>，因此只需要继承、覆盖魔术方法<code>__get()、__set()</code>即可实现<code>属性</code>特性。下面是<code>__get()、__set()</code>实现代码：</p>
+<h3 id="get"><a href="#get" class="headerlink" title="__get()"></a>__get()</h3><ol>
+<li>检查组件中是否包含<code>getter</code>方法</li>
+<li>遍历所有行为是否存在属性</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span><span class="params">($name)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// step1 检查组件是否办好getName()方法</span></span><br><span class="line">    $getter = <span class="string">'get'</span> . $name;</span><br><span class="line">    <span class="keyword">if</span> (method_exists(<span class="keyword">$this</span>, $getter)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;$getter();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// step1 行为中是否包含属性</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;ensureBehaviors();</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;_behaviors <span class="keyword">as</span> $behavior) &#123;</span><br><span class="line">        <span class="keyword">if</span> ($behavior-&gt;canGetProperty($name)) &#123;</span><br><span class="line">            <span class="keyword">return</span> $behavior-&gt;$name;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (method_exists(<span class="keyword">$this</span>, <span class="string">'set'</span> . $name)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InvalidCallException(<span class="string">'Getting write-only property: '</span> . get_class(<span class="keyword">$this</span>) . <span class="string">'::'</span> . $name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> UnknownPropertyException(<span class="string">'Getting unknown property: '</span> . get_class(<span class="keyword">$this</span>) . <span class="string">'::'</span> . $name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="set"><a href="#set" class="headerlink" title="__set()"></a>__set()</h3><ol>
+<li>检查组件是否存在set方法</li>
+<li>是否以<code>on</code>开头的绑定事件</li>
+<li><code>as</code>绑定行为</li>
+<li>检查行为中是否存在set方法</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__set</span><span class="params">($name, $value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $setter = <span class="string">'set'</span> . $name;</span><br><span class="line">    <span class="keyword">if</span> (method_exists(<span class="keyword">$this</span>, $setter)) &#123;</span><br><span class="line">        <span class="comment">// set property</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;$setter($value);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125; <span class="keyword">elseif</span> (strncmp($name, <span class="string">'on '</span>, <span class="number">3</span>) === <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// on event: attach event handler</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;on(trim(substr($name, <span class="number">3</span>)), $value);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125; <span class="keyword">elseif</span> (strncmp($name, <span class="string">'as '</span>, <span class="number">3</span>) === <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// as behavior: attach behavior</span></span><br><span class="line">        $name = trim(substr($name, <span class="number">3</span>));</span><br><span class="line">        <span class="keyword">$this</span>-&gt;attachBehavior($name, $value <span class="keyword">instanceof</span> Behavior ? $value : Yii::createObject($value));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// behavior property</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;ensureBehaviors();</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;_behaviors <span class="keyword">as</span> $behavior) &#123;</span><br><span class="line">        <span class="keyword">if</span> ($behavior-&gt;canSetProperty($name)) &#123;</span><br><span class="line">            $behavior-&gt;$name = $value;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (method_exists(<span class="keyword">$this</span>, <span class="string">'get'</span> . $name)) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> InvalidCallException(<span class="string">'Setting read-only property: '</span> . get_class(<span class="keyword">$this</span>) . <span class="string">'::'</span> . $name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> UnknownPropertyException(<span class="string">'Setting unknown property: '</span> . get_class(<span class="keyword">$this</span>) . <span class="string">'::'</span> . $name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="行为的绑定"><a href="#行为的绑定" class="headerlink" title="行为的绑定"></a>行为的绑定</h2><p>重载<code>Component::behavior()</code>方法即可绑定行为到组件上。</p>
+<p><strong>内部原理</strong>：</p>
+<p>首先我们会注意到<code>ensureBehaviors()</code>这个方法会在<code>__get()、__set()</code>以及<code>__call()</code>等魔术方法中调用，保证行为中的属性被注入到<code>Component</code>。</p>
+<p>通过查看调用栈可以看出函数的调用顺下如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> Component-&gt;ensureBehaviors()</span><br><span class="line"><span class="number">2.</span> Component-&gt;attachBehaviorInternal()</span><br><span class="line"><span class="number">3.</span> Behavior-&gt;attach()</span><br><span class="line"><span class="number">4.</span> Component-&gt;on()</span><br><span class="line"><span class="number">5.</span> Component-&gt;ensureBehaviors()</span><br></pre></td></tr></table></figure>
+
+<h3 id="ensureBehaviors"><a href="#ensureBehaviors" class="headerlink" title="ensureBehaviors"></a>ensureBehaviors</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">ensureBehaviors</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;_behaviors === <span class="keyword">null</span>) &#123;   <span class="comment">// 判断成员变量是否===null，注意是恒等于</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;_behaviors = [];         <span class="comment">// 这一句很关键，如果没有这一句，会形成一个死循环</span></span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;behaviors() <span class="keyword">as</span> $name =&gt; $behavior) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;attachBehaviorInternal($name, $behavior);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码很简单，通过<code>foreach</code>把行为通过<code>attachBehaviorInternal()</code>绑定到<code>$this</code>组件上。</p>
+<p>请一定注意<code>$this-&gt;_behaviors = [];</code>这一段代码，如果我们忽略这一句的重要性，将会影响我们理解。</p>
+<p>当第一次执行<code>Component-&gt;ensureBehaviors()</code>时，会把<code>$this-&gt;_behaviors = [];</code>，当第二次执行<code>Component-&gt;ensureBehaviors()</code>函数时，由于<code>$this-&gt;_behaviors === null</code>从而直接退出。</p>
+<h3 id="attachBehaviorInternal"><a href="#attachBehaviorInternal" class="headerlink" title="attachBehaviorInternal"></a>attachBehaviorInternal</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">attachBehaviorInternal</span><span class="params">($name, $behavior)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!($behavior <span class="keyword">instanceof</span> Behavior)) &#123;</span><br><span class="line">        $behavior = Yii::createObject($behavior);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (is_int($name)) &#123;</span><br><span class="line">        $behavior-&gt;attach(<span class="keyword">$this</span>);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;_behaviors[] = $behavior;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;_behaviors[$name])) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;_behaviors[$name]-&gt;detach();</span><br><span class="line">        &#125;</span><br><span class="line">        $behavior-&gt;attach(<span class="keyword">$this</span>);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;_behaviors[$name] = $behavior;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $behavior;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是一个私有函数，可以看出绑定行为只能在<code>Component</code>中进行。</p>
+<p>这个函数主要做了下面几件事：</p>
+<ol>
+<li>判断<code>$behavior</code>是否为继承<code>Behavior</code>类的实例，如果不是则通过<code>Yii::createObject()</code>创建；</li>
+<li>是否以匿名方式绑定，若是直接绑定；</li>
+<li>若是命名行为，判断行为是否存在<code>Component</code>中，如果则先解绑改行为，然后重新绑定到<code>Component</code>上。</li>
+</ol>
+<p>从执行步骤可以看出，如果是命名行为，后声明的会先声明的行为。但是匿名行为不会。</p>
+<h3 id="attach"><a href="#attach" class="headerlink" title="attach"></a>attach</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">attach</span><span class="params">($owner)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;owner = $owner;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;events() <span class="keyword">as</span> $event =&gt; $handler) &#123;</span><br><span class="line">        $owner-&gt;on($event, is_string($handler) ? [<span class="keyword">$this</span>, $handler] : $handler);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>attach</code>是<code>Behavior</code>中的方法。做两件事：</p>
+<ol>
+<li>设置行为的<code>$owner</code>，将行为依附在<code>Component</code>上；</li>
+<li>遍历行为中的事件，将事件绑定到<code>Component</code>上。</li>
+</ol>
+<h3 id="on"><a href="#on" class="headerlink" title="on"></a>on</h3><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">on</span><span class="params">($name, $handler, $data = null, $append = true)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;ensureBehaviors();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (strpos($name, <span class="string">'*'</span>) !== <span class="keyword">false</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> ($append || <span class="keyword">empty</span>(<span class="keyword">$this</span>-&gt;_eventWildcards[$name])) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;_eventWildcards[$name][] = [$handler, $data];</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            array_unshift(<span class="keyword">$this</span>-&gt;_eventWildcards[$name], [$handler, $data]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ($append || <span class="keyword">empty</span>(<span class="keyword">$this</span>-&gt;_events[$name])) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;_events[$name][] = [$handler, $data];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        array_unshift(<span class="keyword">$this</span>-&gt;_events[$name], [$handler, $data]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>on()</code>函数的作用是把事件依附在<code>Component</code>上，如果包含通配符，在放到<code>$_eventWildcards</code>成员变量中；如果是正常的命名事件，则放到<code>$_events</code>;</p>
+<h2 id="行为响应事件"><a href="#行为响应事件" class="headerlink" title="行为响应事件"></a>行为响应事件</h2><p>通过行为注入，可以在不修改现有类的情况下，更改、扩展类对于事件的响应和支持。如何将行为与<code>Component</code>的事件关联起来，就必须通过<code>Behavior</code>的<code>events()</code>方法。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">events</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        BaseActiveRecord::EVENT_BEFORE_INSERT =&gt; [<span class="keyword">$this</span>, <span class="string">'callback_function'</span>],</span><br><span class="line">    ];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过覆盖<code>events()</code>方法，当<code>Behavior</code>与<code>Component</code>绑定时，会调用<code>Behavior::attach()</code>方法。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>到此，<code>Component</code>的重要特性基本上已经梳理了，重点理解组件是如何绑定行为以及事件是如何依附在组件之上和行为是如何响应事件等原理。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/12/04/Yii2源码分析(4)-Component/" data-id="cjzxuk07f001j1lpc91hj4o4s"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/">PHP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Yii2/">Yii2</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/12/05/Yii2源码分析(5)-ServiceLocator/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Yii2源码分析(5)-ServiceLocator
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/12/03/Yii2源码分析(3)-Behavior/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Yii2源码分析(3)-Behavior</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

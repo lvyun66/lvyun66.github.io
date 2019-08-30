@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    分布式ID生成方案 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-分布式ID生成" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      分布式ID生成方案
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/09/18/分布式ID生成/" class="article-date">
+  <time datetime="2018-09-18T14:40:54.000Z" itemprop="datePublished">2018-09-18</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/分布式/">分布式</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <h2 id="Mysql-ID-auto-increment"><a href="#Mysql-ID-auto-increment" class="headerlink" title="Mysql ID auto_increment"></a>Mysql ID auto_increment</h2><p>利用Mysql递增特性(auto_increment), 保证ID的全局唯一性.</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> <span class="keyword">test</span> AUTO_INCREMENT = <span class="number">1000</span>;</span><br><span class="line"><span class="keyword">set</span> auto_increment_offset = <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<p>Pros:</p>
+<ol>
+<li>简单</li>
+<li>可控</li>
+</ol>
+<p>Cons:</p>
+<ol>
+<li>无法应对高并发, 数据库压力大</li>
+</ol>
+<h2 id="UUID"><a href="#UUID" class="headerlink" title="UUID"></a>UUID</h2><p>通过本地程序服务生成, 不用远程调用</p>
+<p>Pros:</p>
+<ol>
+<li>本地生成, 不需要远程调用</li>
+<li>全局位移不重复</li>
+<li>水平扩展能力强</li>
+</ol>
+<p>Cons:</p>
+<ol>
+<li>占用空间大, 占用128bits,通过存储类型为字符串, 索引效率低</li>
+<li>无法保证ID的持续递增性</li>
+</ol>
+<h2 id="Redis-ID-Mongo-ObjectID"><a href="#Redis-ID-Mongo-ObjectID" class="headerlink" title="Redis ID/Mongo ObjectID"></a>Redis ID/Mongo ObjectID</h2><p>当数据库性能不够时，我们可以使用redis生成ID，这主要依赖redis单线程的特性，用redis的原子操作incr和ncrby来实现。<br>如果需要在同一时间生成更多的ID，可以使用Redis集群。</p>
+<p>Pros：</p>
+<ol>
+<li>不依赖数据库，性能比数据库好</li>
+<li>ID是数字且有序，对于排序有很大的帮助</li>
+</ol>
+<p>Cons：</p>
+<ol>
+<li>如果系统中，本身没有redis，需要增加新组件，增加系统复杂度</li>
+<li>需要进行编码</li>
+</ol>
+<h2 id="Flickr"><a href="#Flickr" class="headerlink" title="Flickr"></a>Flickr</h2><p>同样是利用Mysql的<code>auto increment</code>机制，不过与第一种方案不同在于，这个方案新增一张表，来存在ID</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Field              Type              Collation        Null    Key     Default  Extra           Privileges            <span class="keyword">Comment</span></span><br><span class="line"><span class="comment">-----------------  ----------------  ---------------  ------  ------  -------  --------------  --------------------  -------------------------</span></span><br><span class="line"><span class="keyword">id</span>                 <span class="built_in">char</span>(<span class="number">1</span>)           utf8_general_ci  <span class="keyword">NO</span>      PRI     (<span class="literal">NULL</span>)   auto_increment  <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>  <span class="keyword">unique</span> <span class="keyword">key</span></span><br><span class="line">stub               <span class="built_in">char</span>(<span class="number">1</span>)           utf8_general_ci  <span class="keyword">NO</span>      UNI     (<span class="literal">NULL</span>)                   <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span></span><br><span class="line">updated_time       <span class="built_in">int</span>(<span class="number">10</span>) <span class="keyword">unsigned</span>  (<span class="literal">NULL</span>)           YES             (<span class="literal">NULL</span>)                   <span class="keyword">select</span>,<span class="keyword">insert</span>,<span class="keyword">update</span>  最近更新时间，采用UTC时间戳</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>auto_increment + replace into + MyISAM</code>来实现ID生成服务。</p>
+<p>同样，当性能不足，可以使用Mysql集群，设置auto_increment的起始值和increment_offset偏移量即可生成全局唯一ID。</p>
+<p>Pros：</p>
+<ol>
+<li>ID可控，简单</li>
+</ol>
+<p>Cons：</p>
+<ol>
+<li>写可能成为瓶颈（但只有机器足够多好像也不是问题）</li>
+<li>如果采用Mysql集群，则可能导致在一定时间内ID不连续</li>
+</ol>
+<h2 id="SnowFlake"><a href="#SnowFlake" class="headerlink" title="SnowFlake"></a>SnowFlake</h2><p>Twitter的开源的SnowFlake ID生成算法，<br>41位的时间序列（精确到毫秒）<br>10位的机器标识<br>12位的计数顺序号（最多毫秒生成4096个ID序列）</p>
+<p>Pros：</p>
+<ol>
+<li>高性能，低延迟，独立的应用</li>
+<li>按时间排序</li>
+</ol>
+<p>Cons：</p>
+<ol>
+<li>需要独立部署服务或者依赖zookeeper服务</li>
+</ol>
+<h2 id="Leaf"><a href="#Leaf" class="headerlink" title="Leaf"></a>Leaf</h2><p>Leaf是美团的分布式ID生成服务，可以认为是Flickr的变种。不再基于Mysql的auto_increment特性，批量生成一批ID。<br>max_id表示当前生成的最大ID，用ID用完再去获取新的ID号段，这样可以很大程度降低数据库的压力。<br>同时还可以用biz_tag来区分不同的业务，每个业务之间相互不影响。</p>
+<p>Pros：</p>
+<ol>
+<li>性能好，ID顺序生成</li>
+</ol>
+<p>Cons：</p>
+<ol>
+<li>需要单独开发一套服务，成本较大</li>
+</ol>
+<h2 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h2><p>例如订单号的生成： 日期+用户</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/09/18/分布式ID生成/" data-id="cjzxuk07m001s1lpc66u356et"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ID-Generator/">ID Generator</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/09/19/SignatrueAPI签名/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            Signature数字签名
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2018/09/09/Golang循环队列实现/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Golang循环队列实现</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>

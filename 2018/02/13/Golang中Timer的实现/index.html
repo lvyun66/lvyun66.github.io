@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Golang中Timer的实现 |
+    
+    LvYun`s Blog</title>
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+    <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+  
+  <script src="/js/pace.min.js"></script>
+</head>
+</html>
+<body>
+<main class="content">
+  <section class="outer">
+  
+
+<article id="post-Golang中Timer的实现" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+  
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Golang中Timer的实现
+    </h1>
+  
+  
+
+
+
+
+      </header>
+    
+
+    
+      <div class="article-meta">
+        <a href="/2018/02/13/Golang中Timer的实现/" class="article-date">
+  <time datetime="2018-02-13T17:50:46.000Z" itemprop="datePublished">2018-02-13</time>
+</a>
+        
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+      </div>
+    
+
+    
+      
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+        <p><code>time</code>包含了<code>Timer</code>、<code>Ticker</code>的实现，作用分别为定时器和计时器。定时器配合通道<code>channel</code>使用可以达到通道超时异常处理的效果。</p>
+<a id="more"></a>
+<p><code>Timer</code>结构体中包含了<code>runtime</code>中<code>runtimeTimer</code>的实现，如果要了解具体是如何实现，可以去看<code>runtime</code>库，在这里只会讲<code>time.Timer</code>的实现。</p>
+<p>定时器结构体，包含Time类型的阻塞channel，和一个runtimeTimer：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Timer <span class="keyword">struct</span> &#123;</span><br><span class="line">	C &lt;-<span class="keyword">chan</span> Time</span><br><span class="line">	r runtimeTimer</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中<code>C</code>是一个<code>Time</code>类型的通道。</p>
+<p>新建一个计时器</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 新建计时器的关键代码在于函数startTimer的实现</span></span><br><span class="line"><span class="comment">// 在sleep.go文件中，我们只能找到方法的定义，并没站到是如何具体显示的</span></span><br><span class="line"><span class="comment">// 此函数可以在runtime包中找到</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewTimer</span><span class="params">(d Duration)</span> *<span class="title">Timer</span></span> &#123;</span><br><span class="line">	c := <span class="built_in">make</span>(<span class="keyword">chan</span> Time, <span class="number">1</span>)</span><br><span class="line">	t := &amp;Timer&#123;</span><br><span class="line">		C: c,</span><br><span class="line">		r: runtimeTimer&#123;</span><br><span class="line">			when: when(d),      <span class="comment">// 计时时间，过多少时间后回调函数 sendTime()</span></span><br><span class="line">			f:    sendTime,     <span class="comment">// 发送Time到Timer结构体中</span></span><br><span class="line">			arg:  c,            <span class="comment">// 回调函数的参数</span></span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 编译过程中golang会自动将startTime()函数翻译成runtime.startTimer()</span></span><br><span class="line">	<span class="comment">// 将runtimeTimer结构体翻译为runtime.Timer结构</span></span><br><span class="line">	startTimer(&amp;t.r)            <span class="comment">// 开始计时，关键代码在此</span></span><br><span class="line">	<span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 其中sendTime源码如下,主要作用就是发送一个时间到c.Time</span></span><br><span class="line"><span class="comment">// 关键：c.(chan Time) &lt;- Now()</span></span><br><span class="line"><span class="comment">// 以下为翻译:</span></span><br><span class="line"><span class="comment">// 非阻塞发送time到c结构体</span></span><br><span class="line"><span class="comment">// 在NewTimer中使用,不会被阻塞</span></span><br><span class="line"><span class="comment">// 在NewTicker中使用</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sendTime</span><span class="params">(c <span class="keyword">interface</span>&#123;&#125;, seq <span class="keyword">uintptr</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// Non-blocking send of time on c.</span></span><br><span class="line">	<span class="comment">// Used in NewTimer, it cannot block anyway (buffer).</span></span><br><span class="line">	<span class="comment">// Used in NewTicker, dropping sends on the floor is</span></span><br><span class="line">	<span class="comment">// the desired behavior when the reader gets behind,</span></span><br><span class="line">	<span class="comment">// because the sends are periodic.</span></span><br><span class="line">	<span class="keyword">select</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> c.(<span class="keyword">chan</span> Time) &lt;- Now():</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 返回channel，利用通道的阻塞特性，时间到之后执行分支代码功能</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">After</span><span class="params">(d Duration)</span> &lt;-<span class="title">chan</span> <span class="title">Time</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> NewTimer(d).C</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 关闭计时器</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *Timer)</span> <span class="title">Stop</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> t.r.f == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"time: Stop called on uninitialized Timer"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> stopTimer(&amp;t.r)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 充值计时器</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *Timer)</span> <span class="title">Reset</span><span class="params">(d Duration)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> t.r.f == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"time: Reset called on uninitialized Timer"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	w := when(d)</span><br><span class="line">	active := stopTimer(&amp;t.r)</span><br><span class="line">	t.r.when = w</span><br><span class="line">	startTimer(&amp;t.r)</span><br><span class="line">	<span class="keyword">return</span> active</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="runtime包中startTimer和Timer-的实现"><a href="#runtime包中startTimer和Timer-的实现" class="headerlink" title="runtime包中startTimer和Timer{}的实现"></a>runtime包中startTimer和Timer{}的实现</h2><p><a href="https://github.com/golang/go/blob/871b79316ad7f2b10f1347f8d9077713afaff451/src/runtime/time.go#L106" target="_blank" rel="noopener">runtime包中的startTimer实现</a>，具体是在<code>runtime/time.go</code>文件中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">startTimer</span><span class="params">(t *timer)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> raceenabled &#123;</span><br><span class="line">		racerelease(unsafe.Pointer(t))</span><br><span class="line">	&#125;</span><br><span class="line">	addtimer(t)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">addtimer</span><span class="params">(t *timer)</span></span> &#123;</span><br><span class="line">	tb := t.assignBucket()</span><br><span class="line">	lock(&amp;tb.lock)</span><br><span class="line">	tb.addtimerLocked(t)</span><br><span class="line">	unlock(&amp;tb.lock)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Add a timer to the heap and start or kick timerproc if the new timer is</span></span><br><span class="line"><span class="comment">// earlier than any of the others.</span></span><br><span class="line"><span class="comment">// Timers are locked.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(tb *timersBucket)</span> <span class="title">addtimerLocked</span><span class="params">(t *timer)</span></span> &#123;</span><br><span class="line">	<span class="comment">// when must never be negative; otherwise timerproc will overflow</span></span><br><span class="line">	<span class="comment">// during its delta calculation and never expire other runtime timers.</span></span><br><span class="line">	<span class="keyword">if</span> t.when &lt; <span class="number">0</span> &#123;</span><br><span class="line">		t.when = <span class="number">1</span>&lt;&lt;<span class="number">63</span> - <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">	t.i = <span class="built_in">len</span>(tb.t)</span><br><span class="line">	tb.t = <span class="built_in">append</span>(tb.t, t)</span><br><span class="line">	siftupTimer(tb.t, t.i)</span><br><span class="line">	<span class="keyword">if</span> t.i == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="comment">// siftup moved to top: new earliest deadline.</span></span><br><span class="line">		<span class="keyword">if</span> tb.sleeping &#123;</span><br><span class="line">			tb.sleeping = <span class="literal">false</span></span><br><span class="line">			notewakeup(&amp;tb.waitnote)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> tb.rescheduling &#123;</span><br><span class="line">			tb.rescheduling = <span class="literal">false</span></span><br><span class="line">			goready(tb.gp, <span class="number">0</span>)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> !tb.created &#123;</span><br><span class="line">		tb.created = <span class="literal">true</span></span><br><span class="line">		<span class="keyword">go</span> timerproc(tb)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Timerproc runs the time-driven events.</span></span><br><span class="line"><span class="comment">// It sleeps until the next event in the tb heap.</span></span><br><span class="line"><span class="comment">// If addtimer inserts a new earlier event, it wakes timerproc early.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">timerproc</span><span class="params">(tb *timersBucket)</span></span> &#123;</span><br><span class="line">	tb.gp = getg()</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		lock(&amp;tb.lock)</span><br><span class="line">		tb.sleeping = <span class="literal">false</span></span><br><span class="line">		now := nanotime()</span><br><span class="line">		delta := <span class="keyword">int64</span>(<span class="number">-1</span>)</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> <span class="built_in">len</span>(tb.t) == <span class="number">0</span> &#123;</span><br><span class="line">				delta = <span class="number">-1</span></span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">			&#125;</span><br><span class="line">			t := tb.t[<span class="number">0</span>]</span><br><span class="line">			delta = t.when - now</span><br><span class="line">			<span class="keyword">if</span> delta &gt; <span class="number">0</span> &#123;</span><br><span class="line">				<span class="keyword">break</span></span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">if</span> t.period &gt; <span class="number">0</span> &#123;</span><br><span class="line">				<span class="comment">// leave in heap but adjust next time to fire</span></span><br><span class="line">				t.when += t.period * (<span class="number">1</span> + -delta/t.period)</span><br><span class="line">				siftdownTimer(tb.t, <span class="number">0</span>)</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="comment">// remove from heap</span></span><br><span class="line">				last := <span class="built_in">len</span>(tb.t) - <span class="number">1</span></span><br><span class="line">				<span class="keyword">if</span> last &gt; <span class="number">0</span> &#123;</span><br><span class="line">					tb.t[<span class="number">0</span>] = tb.t[last]</span><br><span class="line">					tb.t[<span class="number">0</span>].i = <span class="number">0</span></span><br><span class="line">				&#125;</span><br><span class="line">				tb.t[last] = <span class="literal">nil</span></span><br><span class="line">				tb.t = tb.t[:last]</span><br><span class="line">				<span class="keyword">if</span> last &gt; <span class="number">0</span> &#123;</span><br><span class="line">					siftdownTimer(tb.t, <span class="number">0</span>)</span><br><span class="line">				&#125;</span><br><span class="line">				t.i = <span class="number">-1</span> <span class="comment">// mark as removed</span></span><br><span class="line">			&#125;</span><br><span class="line">			f := t.f</span><br><span class="line">			arg := t.arg</span><br><span class="line">			seq := t.seq</span><br><span class="line">			unlock(&amp;tb.lock)</span><br><span class="line">			<span class="keyword">if</span> raceenabled &#123;</span><br><span class="line">				raceacquire(unsafe.Pointer(t))</span><br><span class="line">			&#125;</span><br><span class="line">			f(arg, seq)</span><br><span class="line">			lock(&amp;tb.lock)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> delta &lt; <span class="number">0</span> || faketime &gt; <span class="number">0</span> &#123;</span><br><span class="line">			<span class="comment">// No timers left - put goroutine to sleep.</span></span><br><span class="line">			tb.rescheduling = <span class="literal">true</span></span><br><span class="line">			goparkunlock(&amp;tb.lock, <span class="string">"timer goroutine (idle)"</span>, traceEvGoBlock, <span class="number">1</span>)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// At least one timer pending. Sleep until then.</span></span><br><span class="line">		tb.sleeping = <span class="literal">true</span></span><br><span class="line">		tb.sleepUntil = now + delta</span><br><span class="line">		noteclear(&amp;tb.waitnote)</span><br><span class="line">		unlock(&amp;tb.lock)</span><br><span class="line">		notetsleepg(&amp;tb.waitnote, delta)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>runtime/time.go</code>包含了<code>time</code>包中所有的基本实现过程，有兴趣可以深入学习</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://lvyun66.github.io/2018/02/13/Golang中Timer的实现/" data-id="cjzxuk06c000g1lpcyx26dco8"
+         class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Golang/">Golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/timer/">timer</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+    
+  <nav class="article-nav">
+    
+      <a href="/2018/02/20/如何优雅关闭Golang的Channel/" class="article-nav-link">
+        <strong class="article-nav-caption">Newer posts</strong>
+        <div class="article-nav-title">
+          
+            优雅的关闭Golang的Channel
+          
+        </div>
+      </a>
+    
+    
+      <a href="/2017/12/28/Composer升级库/" class="article-nav-link">
+        <strong class="article-nav-caption">Olde posts</strong>
+        <div class="article-nav-title">Composer升级库</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+    
+  
+
+</article>
+
+
+
+</section>
+  <footer class="footer">
+  <div class="outer">
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+</ul>
+    </div>
+    <ul class="list-inline">
+      <li>&copy; 2019 LvYun`s Blog</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
+  </div>
+</footer>
+
+</main>
+
+<aside class="sidebar sidebar-specter">
+  
+    <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/shark.svg" alt="LvYun`s Blog"></a>
+    </div>
+  
+  <ul class="nav nav-main">
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">首页</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">归档</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/categories">分类</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">关于</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+  </aside>
+  <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script src="/js/ocean.js"></script>
+
+</body>
+</html>
