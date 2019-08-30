@@ -7,8 +7,11 @@ categories:
 - PHP
 comments: true
 ---
+
 今天在阅读一个项目源码时候碰到了PHP的`global`关键词和`$GLOBALS`超全局变量的使用，看到这两个关键词的时候有点懵逼，虽然知道这是干嘛的，但是对其使用方式不是很清楚。特在此记录下学习的过程。
+
 <!-- more -->
+
 ## 变量范围
 
 变量的范围即它定义的上下文背景（也就是它的生效范围）。具体信息见[PHP文档-变量](http://php.net/manual/zh/language.variables.scope.php)
@@ -196,6 +199,6 @@ $GLOBALS['var'] 则指的是变量本身。
 global $var 等价于 $var = &$GLOBALS['var']
 ```
 
-这里引用鸟哥在 [PHP源码分析之 GLOBAL 关键字](http://www.laruence.com/2008/08/24/377.html) 的一句话：
-
-**如果你global了一个变量，那么 Zend 就会去全局 symbol_table 去寻找，如果找不到，就会在全局 symbol_table 中分配相应的变量。**
+>这里引用鸟哥在 [PHP源码分析之 GLOBAL 关键字](http://www.laruence.com/2008/08/24/377.html) 的一句话：
+>
+>**如果你global了一个变量，那么 Zend 就会去全局 symbol_table 去寻找，如果找不到，就会在全局 symbol_table 中分配相应的变量。**

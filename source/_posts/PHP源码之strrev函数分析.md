@@ -13,6 +13,8 @@ PHP函数`strrev`的作用是反转字符串，传入一个带反转的字符串
 
 <!-- more -->
 
+## 函数原型及用法
+
 函数原型如下：
 ```php
 strrev(string $str): string
@@ -24,7 +26,7 @@ PHP官方文档：[strrev](https://www.php.net/manual/en/function.strrev.php) �
 1. 反转字符串或一串数字
 2. 判断数字是否为回文数
 
-## 函数源码实现
+## 源码实现
 
 源文件位于`php-src/ext/standard/string.c`文件中，是PHP标准扩展string字符串扩展中的一个函数。
 
@@ -89,6 +91,8 @@ PHP_FUNCTION(strrev)    // 声明函数名称 strrev
 /* }}} */
 ```
 
+
+## 结论
 从源码可以看出，反转字符串用到了两个数组，一个是参数、另一个是返回结果。函数通过遍历参数str，实现函数的反转。
 
 当字符串长度大于15可能会对函数进行优化。具体如何优化，后面对源码理解更加深刻之后再来填坑。
