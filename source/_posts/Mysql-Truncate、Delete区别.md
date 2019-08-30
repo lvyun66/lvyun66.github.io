@@ -1,10 +1,10 @@
 ---
-title: Mysql truncate、delete区别
+title: MySQL truncate、delete区别
 date: 2018-10-29 10:30:56
 tags:
-    - mysql
+- MySQL
 categories:
-    - mysql
+- MySQL
 comments: true
 ---
 

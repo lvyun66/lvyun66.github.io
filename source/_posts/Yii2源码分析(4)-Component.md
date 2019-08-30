@@ -2,10 +2,10 @@
 title: Yii2源码分析(4)-Component
 date: 2018-12-04 10:57:48
 tags:
-    - Yii2
-    - PHP
+- Yii2
+- PHP
 categories:
-    - Yii2
+- Yii2
 comments: true
 ---
 

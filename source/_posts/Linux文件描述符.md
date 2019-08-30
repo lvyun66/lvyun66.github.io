@@ -2,10 +2,10 @@
 title: Linux文件描述符
 date: 2018/05/28 19:07:09
 tags:
-    - Linux
-    - 文件描述符
+- Linux
+- 文件描述符
 categories:
-    - Linux
+- Linux
 comments: true
 ---
 

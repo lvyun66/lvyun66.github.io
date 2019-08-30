@@ -2,10 +2,10 @@
 title: Atom插件推荐
 date: 2017-09-15 10:19:12
 tags:
-    - Atom
-    - 插件
+- Atom
+- 插件
 categories:
-    - Atom
+- Atom
 comments: true
 ---
 

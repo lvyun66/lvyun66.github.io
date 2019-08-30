@@ -2,10 +2,10 @@
 title: Linux文件权限
 date: 2017-09-13 19:42:23
 tags:
-    - Linux
-    - 文件权限
+- Linux
+- 文件权限
 categories:
-    - Linux
+- Linux
 comments: true
 ---
 

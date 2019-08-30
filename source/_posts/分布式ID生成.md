@@ -4,7 +4,7 @@ date: 2018-09-18 14:40:54
 tags:
 - ID Generator
 categories:
-- 其他
+- 分布式
 comments: true
 ---
 

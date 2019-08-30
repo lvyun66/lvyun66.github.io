@@ -2,9 +2,10 @@
 title: Git基本用户
 date: 2018-3-15 20:15:04
 tags:
-    - Git
+- Git
+- config
 categories:
-    - Git
+- Git
 comments: true
 ---
 

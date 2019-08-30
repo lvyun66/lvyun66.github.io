@@ -2,10 +2,10 @@
 title: fopen中mode详解
 date: 2018-12-10 16:49:14
 tags:
-    - PHP
-    - fopen
+- PHP
+- fopen
 categorites:
-    - PHP
+- PHP
 comments: true
 ---
 

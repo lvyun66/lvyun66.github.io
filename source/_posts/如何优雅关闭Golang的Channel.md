@@ -2,10 +2,10 @@
 title: 优雅的关闭Golang的Channel
 date: 2018-02-20 17:50:46
 tags:
-    - Golang
-    - channel
+- Golang
+- channel
 categories:
-    - Golang
+- Golang
 comments: true
 ---
 

@@ -2,10 +2,10 @@
 title: Golang文件操作方式
 date: 2018-3-21 10:57:03
 tags:
-    - Golang
-    - file operator
+- Golang
+- 文件
 categories:
-    - Golang
+- Golang
 comments: true
 ---
 

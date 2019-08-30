@@ -2,9 +2,9 @@
 title: Golang那些不容忽视的细节
 date: 2019-03-20 14:32:23
 tags:
-    - golang
+- Golang
 categories:
-    - golang
+- Golang
 conments: true
 ---
 

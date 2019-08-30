@@ -2,10 +2,10 @@
 title: Golang中Timer的实现
 date: 2018-2-13 17:50:46
 tags:
-    - Golang
-    - timer
+- Golang
+- timer
 categories:
-    - Golang
+- Golang
 comments: true
 ---
 

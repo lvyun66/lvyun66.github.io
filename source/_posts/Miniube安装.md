@@ -2,9 +2,9 @@
 title: 费了九牛二虎之力安装miniube
 date: 2019-03-22 17:57:01
 tags:
-    - k8s
+- k8s
 categories:
-    - k8s
+- k8s
 comments: true
 ---
 

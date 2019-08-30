@@ -2,10 +2,10 @@
 title: Firdwalld防火墙
 date: 2017-11-29 09:29:24
 tags:
-    - Linux
-    - Firewall
+- Linux
+- Firewall
 categories:
-    - Firewall
+- Linux
 comments: true
 ---
 

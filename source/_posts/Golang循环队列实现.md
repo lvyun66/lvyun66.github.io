@@ -2,11 +2,11 @@
 title: Golang循环队列实现
 date: 2018-09-09 10:55:46
 tags:
-    - Golang
-    - Queue
-    - CircularQueue
+- Golang
+- Queue
+- CircularQueue
 categories:
-    - Golang
+- Golang
 comments: true
 ---
 

@@ -2,9 +2,9 @@
 title: Linux标准输入输出错误以及重定向详解
 date: 2018-10-15 22:35:58
 tags:
-    - Linux
+- Linux
 catgeoires:
-    - Linux
+- Linux
 comments: true
 ---
 

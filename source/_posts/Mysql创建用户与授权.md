@@ -2,9 +2,10 @@
 title: Mysql创建用户与授权
 date: 2017-09-14 20:17:43
 tags:
-    - mysql
+- MySQL
+- 授权
 categories:
-    - mysql
+- MySQL
 comments: true
 ---
 ## Mysql创建用户与授权

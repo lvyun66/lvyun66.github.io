@@ -2,10 +2,10 @@
 title: Linux 环境变量
 date: 2017-09-13 19:43:47
 tags:
-    - Linux
-    - 环境变量
+- Linux
+- 环境变量
 categories:
-    - Linux
+- Linux
 comments: true
 ---
 

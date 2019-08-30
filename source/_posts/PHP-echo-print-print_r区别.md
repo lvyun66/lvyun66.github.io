@@ -1,5 +1,5 @@
 ---
-title: PHP从本质上分析echo print print_r三者之间的区别？
+title: PHP从本质上分析echo、print、print_r三者之间的区别？
 date: 2019-08-21 09:38:25
 categories:
 - PHP

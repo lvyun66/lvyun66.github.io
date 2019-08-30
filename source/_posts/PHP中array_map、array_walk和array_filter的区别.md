@@ -2,12 +2,12 @@
 title: PHP数组函数
 date: 2018-3-23 10:39:20
 tags:
-    - PHP
-    - array_map
-    - array_walk
-    - array_filter
+- PHP
+- array_map
+- array_walk
+- array_filter
 categories:
-    - PHP
+- PHP
 comments: true
 ---
 

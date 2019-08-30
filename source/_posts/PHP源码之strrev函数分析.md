@@ -2,10 +2,10 @@
 title: PHP源码之strrev函数分析
 date: 2019-04-09 19:03:01
 tags:
-    - PHP
-    - 源码
+- PHP
+- 源码
 categories:
-    - PHP
+- PHP
 comments: true
 ---
 

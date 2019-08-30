@@ -2,10 +2,10 @@
 title: Composer私有仓库搭建
 date: 2017-09-13 19:50:54
 tags:
-    - PHP
-    - Composer
+- PHP
+- Composer
 categories:
-    - Composer
+- Composer
 comments: true
 ---
 

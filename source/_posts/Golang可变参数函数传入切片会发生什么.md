@@ -2,9 +2,9 @@
 title: Golang可变参数函数，传入切片会发生什么？
 date: 2019-03-21 12:00:27
 tags:
-    - golang
+- Golang
 categories:
-    - golang
+- Golang
 comments: true
 ---
 

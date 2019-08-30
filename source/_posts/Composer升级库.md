@@ -2,10 +2,10 @@
 title: Composer升级库
 date: 2017-12-28 14:38:50
 tags:
-    - PHP
-    - Composer
+  - PHP
+  - Composer
 categories:
-    - Composer
+- Composer
 comments: true
 ---
 

@@ -2,10 +2,10 @@
 title: MongoDB基础
 date: 2017-9-18 23:43:00
 tags:
-    - mongodb
-    - nosql
+- MongoDB
+- NoSQL
 categories:
-    - mongodb
+- MongoDB
 comments: true
 ---
 

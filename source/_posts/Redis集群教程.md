@@ -3,8 +3,8 @@ title: Redis集群教程
 date: 2019-02-14 19:10:25
 tags: redis
 categories:
-  - redis
-  - cluster
+- Redis
+- Cluster
 comments: true
 ---
 

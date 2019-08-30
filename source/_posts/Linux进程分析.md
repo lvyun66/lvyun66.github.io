@@ -2,10 +2,10 @@
 title: Linux进程分析
 date: 2018/06/05 19:07:39
 tags:
-    - Linux
-    - 进程
+- Linux
+- 进程
 categories:
-    - Linux
+- Linux
 comments: true
 ---
 

@@ -2,11 +2,11 @@
 title: 使用Swoole搭建TCP聊天室
 date: 2018-10-16 11:33:21
 tags:
-    - PHP
+- PHP
+- TCP
 categories:
-    - PHP
-    - Swoole
-    - TCP
+- PHP
+- Swoole
 comments: true
 ---
 
